@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace duybao.data.Entities
 {
+	/*
+ -sinh vien :Phung Dam Duy Bao
+ -mssv: 2123110487
+ -ngay tao: 14/5/2026
+ -version: 1.0
+ */
     public class Order
     {
         [Key]
@@ -18,7 +24,8 @@ namespace duybao.data.Entities
         public int CustomerId { get; set; }
 
         public int Status { get; set; } // 0: Ch? duy?t, 1: ?ang giao, 2: ?ã xong
-        public string? Notes { get; set; }
+
+        public string? Notes { get; set; }
 
         [ForeignKey("CustomerId")] 
         public virtual Customer? Customer { get; set; }

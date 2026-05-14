@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace duybao.data.Entities
 {
-    // Khách hàng
-    public class Customer
+	/*
+ -sinh vien :Phung Dam Duy Bao
+ -mssv: 2123110487
+ -ngay tao: 14/5/2026
+ -version: 1.0
+ */
+	// Khách hàng
+	public class Customer
     {
         [Key]
         public int Id { get; set; }

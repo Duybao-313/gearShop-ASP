@@ -1,0 +1,12 @@
+D:\web.net\duybao_solution\duybao.data\bin\Debug\net8.0\duybao.data.deps.json
+D:\web.net\duybao_solution\duybao.data\bin\Debug\net8.0\duybao.data.dll
+D:\web.net\duybao_solution\duybao.data\bin\Debug\net8.0\duybao.data.pdb
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.GeneratedMSBuildEditorConfig.editorconfig
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.AssemblyInfoInputs.cache
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.AssemblyInfo.cs
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.csproj.CoreCompileInputs.cache
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.sourcelink.json
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.dll
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\refint\duybao.data.dll
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.pdb
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\ref\duybao.data.dll

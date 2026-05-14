@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="duybao.Backend/duybao.Backend.csproj" Id="0a29f86e-f628-48d3-b29f-bf047d008800" />
   <Project Path="duybao.data/duybao.data.csproj" />
 </Solution>

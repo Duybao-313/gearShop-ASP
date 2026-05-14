@@ -1,0 +1,44 @@
+@model IEnumerable<duybao.data.Entities.User>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-dark">QU?N LÝ THÀNH VIÊN</h2>
+        <button class="btn btn-success btn-sm">+ Thêm thành viên m?i</button>
+    </div>
+
+    <table class="table table-hover shadow-sm border">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Tên ??ng Nh?p</th>
+                <th>H? Và Tên</th>
+                <th>Quy?n H?n</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td><strong>@user.Username</strong></td>
+                    <td>@user.FullName</td>
+                    <td>
+                        @if (user.Role == "Administrator")
+                        {
+                            <span class="badge bg-danger">@user.Role</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-info text-dark">@user.Role</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-warning">S?a</button>
+                        <button class="btn btn-sm btn-outline-danger">Xóa</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

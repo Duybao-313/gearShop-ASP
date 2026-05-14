@@ -1,19 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
-using duybao.data.Entities; // K?t n?i t?i l?p d? li?u b?n v?a t?o
+using duybao.data; // Thêm dòng này ?? g?i ApplicationDbContext
+using duybao.data.Entities;
 
 namespace duybao.Backend.Controllers
 {
     public class CategoryController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        // "Tiêm" k?t n?i vào Controller
+        public CategoryController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
-            // T?o danh sách d? li?u m?u tr?c ti?p trong code
-            var list = new List<Category>
-            {
-                new Category { Id = 1, Name = "Tin Công Ngh?", Description = "Review Laptop, AI" },
-                new Category { Id = 2, Name = "Giáo D?c", Description = "Thông tin tuy?n sinh" }
-            };
-            return View(list); // G?i danh sách này sang giao di?n
+            // L?y d? li?u TH?T t? b?ng Categories trong Database
+            var data = _context.Categories.ToList(); 
+            return View(data);
         }
     }
 }

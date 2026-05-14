@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("duybao.data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64e2da29c34ec25f5632924e5adcedbe63316ed0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+78bfa5fb67db9757b89ff18c41bfd38c0b85e1b5")]
 [assembly: System.Reflection.AssemblyProductAttribute("duybao.data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("duybao.data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

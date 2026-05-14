@@ -10,3 +10,6 @@ D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.dll
 D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\refint\duybao.data.dll
 D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.pdb
 D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\ref\duybao.data.dll
+D:\web.net\duybao_solution\duybao.data\bin\Debug\net8.0\duybao.data.runtimeconfig.json
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.csproj.AssemblyReference.cache
+D:\web.net\duybao_solution\duybao.data\obj\Debug\net8.0\duybao.data.genruntimeconfig.cache

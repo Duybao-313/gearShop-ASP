@@ -30,7 +30,6 @@ D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\staticwebassets.build
 D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\staticwebassets.development.json
 D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\swae.build.ex.cache
-D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\duybao.B.C4DCD41F.Up2Date
 D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\duybao.Backend.dll
 D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\refint\duybao.Backend.dll

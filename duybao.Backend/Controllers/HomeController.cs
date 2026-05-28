@@ -1,21 +1,33 @@
 using System.Diagnostics;
 using duybao.Backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using duybao.data;
+using duybao.data.Entities;
 
 namespace duybao.Backend.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View();
+            // LINQ: Lấy 3 bài viết mới nhất kèm tên danh mục
+            var latestPosts = _context.Posts
+                .Include(p => p.Category)
+                .OrderByDescending(p => p.CreatedDate)
+                .Take(3)
+                .ToList();
+
+            return View(latestPosts);
         }
 
         public IActionResult Privacy()

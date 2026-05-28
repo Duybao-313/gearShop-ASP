@@ -1,7 +1,17 @@
-@model IEnumerable<duybao.data.Entities.Post>
+﻿@model IEnumerable<duybao.data.Entities.Post>
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Danh sách bài viết";
+}
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-danger">DANH S�CH B�I VI?T M?I NH?T</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-dark">DANH SÁCH BÀI VIẾT</h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Thêm bài viết mới
+        </a>
+    </div>
     <div class="row">
         @foreach (var item in Model)
         {
@@ -9,10 +19,19 @@
                 <div class="card shadow-sm">
                     <img src="@item.ImageUrl" class="card-img-top" alt="Thumbnail">
                     <div class="card-body">
+                        <span class="badge bg-info text-dark">@item.Category.Name</span>
                         <h5 class="card-title text-primary">@item.Title</h5>
-                        <p class="card-text text-truncate">@item.Content</p>
-                        <p class="text-muted small">Ng�y ??ng: @item.CreatedDate.ToString("dd/MM/yyyy")</p>
-                        <a href="/Post/Details/@item.Id" class="btn btn-outline-primary btn-sm">Xem chi ti?t</a>
+                        <p class="card-text text-truncate">@Html.Raw(item.Content)</p>
+                        <p class="text-muted small">Ngày đăng: @item.CreatedDate.ToString("dd/MM/yyyy")</p>
+                        <a href="/Post/Details/@item.Id" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">
+                            <i class="bi bi-pencil"></i> Sửa
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id"
+                           class="btn btn-sm btn-outline-danger"
+                           onclick="return confirm('Chúng ta có chắc chắn muốn xóa bài viết này không?')">
+                            <i class="bi bi-trash"></i> Xóa
+                        </a>
                     </div>
                 </div>
             </div>

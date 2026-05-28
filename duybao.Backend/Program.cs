@@ -13,6 +13,22 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 
+// T? ??ng áp d?ng các Migration vào database m?i khi kh?i ch?y ?ng d?ng
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate(); // T? ??ng t?o b?ng/c?p nh?t database
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Có l?i x?y ra khi t?o ho?c c?p nh?t Database.");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

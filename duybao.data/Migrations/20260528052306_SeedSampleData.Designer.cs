@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using duybao.data;
 
@@ -11,9 +12,11 @@ using duybao.data;
 namespace duybao.data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260528052306_SeedSampleData")]
+    partial class SeedSampleData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,32 +49,32 @@ namespace duybao.data.Migrations
                         new
                         {
                             Id = 1,
-                            Description = "Cập nhật xu hướng AI, IoT và lập trình.",
-                            Name = "Tin tức Công nghệ"
+                            Description = "C?p nh?t xu h??ng AI, IoT và l?p trình.",
+                            Name = "Tin t?c Công ngh?"
                         },
                         new
                         {
                             Id = 2,
-                            Description = "Kinh nghiệm phượt và các điểm đến hấp dẫn.",
-                            Name = "Đời sống du lịch"
+                            Description = "Kinh nghi?m ph??t và các ?i?m ??n h?p d?n.",
+                            Name = "??i s?ng du l?ch"
                         },
                         new
                         {
                             Id = 3,
-                            Description = "Các bài tập và chế độ ăn uống lành mạnh.",
-                            Name = "Sức khỏe Thể thao"
+                            Description = "Các bài t?p và ch? ?? ?n u?ng lành m?nh.",
+                            Name = "S?c kh?e Th? thao"
                         },
                         new
                         {
                             Id = 4,
-                            Description = "Phương pháp học tập và kỹ năng mềm.",
-                            Name = "Giáo dục Kỹ năng"
+                            Description = "Ph??ng pháp h?c t?p và k? n?ng m?m.",
+                            Name = "Giáo d?c K? n?ng"
                         },
                         new
                         {
                             Id = 5,
-                            Description = "Tài liệu ASP.NET Core và SQL Server.",
-                            Name = "Góc lập trình viên"
+                            Description = "Tài li?u ASP.NET Core và SQL Server.",
+                            Name = "Góc l?p trình viên"
                         });
                 });
 
@@ -220,46 +223,46 @@ namespace duybao.data.Migrations
                         {
                             Id = 1,
                             CategoryId = 5,
-                            Content = "Hướng dẫn chi tiết cho người mới bắt đầu...",
+                            Content = "H??ng d?n chi ti?t cho ng??i m?i b?t ??u...",
                             CreatedDate = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ImageUrl = "/img/dotnet.jpg",
-                            Title = "Lộ trình học ASP.NET"
+                            Title = "L? trình h?c ASP.NET"
                         },
                         new
                         {
                             Id = 2,
                             CategoryId = 2,
-                            Content = "Những địa điểm không thể bỏ qua mùa hè này...",
+                            Content = "Nh?ng ??a ?i?m không th? b? qua mùa hè này...",
                             CreatedDate = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ImageUrl = "/img/beach.jpg",
-                            Title = "Top 5 bãi biển đẹp"
+                            Title = "Top 5 bãi bi?n ??p"
                         },
                         new
                         {
                             Id = 3,
                             CategoryId = 3,
-                            Content = "Lợi ích tuyệt vời của việc chạy bộ mỗi sáng...",
+                            Content = "L?i ích tuy?t v?i c?a vi?c ch?y b? m?i sáng...",
                             CreatedDate = new DateTime(2026, 4, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ImageUrl = "/img/run.jpg",
-                            Title = "Chạy bộ đúng cách"
+                            Title = "Ch?y b? ?úng cách"
                         },
                         new
                         {
                             Id = 4,
                             CategoryId = 1,
-                            Content = "Trí tuệ nhân tạo đang thay đổi cuộc sống...",
+                            Content = "Trí tu? nhân t?o ?ang thay ??i cu?c s?ng...",
                             CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ImageUrl = "/img/ai.jpg",
-                            Title = "AI và tương lai"
+                            Title = "AI và t??ng lai"
                         },
                         new
                         {
                             Id = 5,
                             CategoryId = 4,
-                            Content = "Cách phối hợp hiệu quả trong nhóm đồ án...",
+                            Content = "Cách ph?i h?p hi?u qu? trong nhóm ?? án...",
                             CreatedDate = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ImageUrl = "/img/team.jpg",
-                            Title = "Kỹ năng Teamwork"
+                            Title = "K? n?ng Teamwork"
                         });
                 });
 
@@ -329,7 +332,7 @@ namespace duybao.data.Migrations
                         new
                         {
                             Id = 1,
-                            FullName = "Quản trị viên hệ thống",
+                            FullName = "Qu?n tr? viên h? th?ng",
                             PasswordHash = "123456",
                             Role = "Admin",
                             Username = "admin"
@@ -337,7 +340,7 @@ namespace duybao.data.Migrations
                         new
                         {
                             Id = 2,
-                            FullName = "Nguyễn Cao Thái",
+                            FullName = "Nguy?n Cao Thái",
                             PasswordHash = "thai1969",
                             Role = "Editor",
                             Username = "thai_gv"
@@ -345,7 +348,7 @@ namespace duybao.data.Migrations
                         new
                         {
                             Id = 3,
-                            FullName = "Nguyễn Văn A",
+                            FullName = "Nguy?n V?n A",
                             PasswordHash = "student1",
                             Role = "User",
                             Username = "sv_01"
@@ -353,7 +356,7 @@ namespace duybao.data.Migrations
                         new
                         {
                             Id = 4,
-                            FullName = "Trần Thị B",
+                            FullName = "Tr?n Th? B",
                             PasswordHash = "student2",
                             Role = "User",
                             Username = "sv_02"
@@ -361,7 +364,7 @@ namespace duybao.data.Migrations
                         new
                         {
                             Id = 5,
-                            FullName = "Lê Văn C",
+                            FullName = "Lê V?n C",
                             PasswordHash = "mod789",
                             Role = "Moderator",
                             Username = "moderator"

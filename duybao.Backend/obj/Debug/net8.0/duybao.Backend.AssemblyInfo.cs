@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("duybao.Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+db9431c647f6a01dd44b210e8f7fc77df2a678fd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6034857f51b49e70c4ccbb2209281782004ab8ef")]
 [assembly: System.Reflection.AssemblyProductAttribute("duybao.Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("duybao.Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -142,3 +142,8 @@ D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\runtimes\win\lib\net6
 D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\MySqlConnector.dll
 D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\Pomelo.EntityFrameworkCore.MySql.dll
+D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\Microsoft.OpenApi.dll
+D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\duybao.Backend.MvcApplicationPartsAssemblyInfo.cs

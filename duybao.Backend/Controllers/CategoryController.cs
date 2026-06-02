@@ -1,14 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using duybao.data; // Thêm dòng này ?? g?i ApplicationDbContext
+using duybao.data;
 using duybao.data.Entities;
 
 namespace duybao.Backend.Controllers
 {
+    [Authorize]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        // "Tiêm" k?t n?i vào Controller
+        // "Tiï¿½m" k?t n?i vï¿½o Controller
         public CategoryController(ApplicationDbContext context)
         {
             _context = context;
@@ -21,68 +23,68 @@ namespace duybao.Backend.Controllers
             return View(data);
         }
 
-        // 1. Hàm GET: Dùng ?? hi?n th? giao di?n Form cho nh?p
+        // 1. Hï¿½m GET: Dï¿½ng ?? hi?n th? giao di?n Form cho nh?p
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // 2. Hàm POST: Dùng ?? ?ón d? li?u t? Form g?i lên và l?u vào SQL
+        // 2. Hï¿½m POST: Dï¿½ng ?? ?ï¿½n d? li?u t? Form g?i lï¿½n vï¿½ l?u vï¿½o SQL
         [HttpPost]
         public IActionResult Create(Category model)
         {
-            // B??C 1: Thêm d? li?u vào b? nh? t?m c?a Entity Framework
+            // B??C 1: Thï¿½m d? li?u vï¿½o b? nh? t?m c?a Entity Framework
             _context.Categories.Add(model);
-            // B??C 2: Ra l?nh cho h? th?ng ghi d? li?u th?t s? vào SQL Server
+            // B??C 2: Ra l?nh cho h? th?ng ghi d? li?u th?t s? vï¿½o SQL Server
             _context.SaveChanges();
-            // Sau khi l?u thành công, t? ??ng quay v? trang danh sách
+            // Sau khi l?u thï¿½nh cï¿½ng, t? ??ng quay v? trang danh sï¿½ch
             return RedirectToAction("Index");
         }
 
-        // Action nh?n vào Id c?a danh m?c c?n xóa
+        // Action nh?n vï¿½o Id c?a danh m?c c?n xï¿½a
         public IActionResult Delete(int id)
         {
-            // B??c 1: Tìm ??i t??ng danh m?c trong Database b?ng Id
+            // B??c 1: Tï¿½m ??i t??ng danh m?c trong Database b?ng Id
             var category = _context.Categories.Find(id);
 
-            // Ki?m tra n?u tìm th?y thì m?i xóa
+            // Ki?m tra n?u tï¿½m th?y thï¿½ m?i xï¿½a
             if (category != null)
             {
-                // B??c 2: L?nh xóa kh?i b? nh? t?m (Tracking)
+                // B??c 2: L?nh xï¿½a kh?i b? nh? t?m (Tracking)
                 _context.Categories.Remove(category);
 
-                // B??c 3: Ch?t phiên làm vi?c, xóa th?c s? trong SQL Server
+                // B??c 3: Ch?t phiï¿½n lï¿½m vi?c, xï¿½a th?c s? trong SQL Server
                 _context.SaveChanges();
             }
 
-            // Sau khi xóa xong, quay l?i trang danh sách ?? c?p nh?t giao di?n
+            // Sau khi xï¿½a xong, quay l?i trang danh sï¿½ch ?? c?p nh?t giao di?n
             return RedirectToAction("Index");
         }
 
-        // 1. Hàm GET: Tìm d? li?u c? và ?? lên Form
+        // 1. Hï¿½m GET: Tï¿½m d? li?u c? vï¿½ ?? lï¿½n Form
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            // Tìm danh m?c trong Database theo Id
+            // Tï¿½m danh m?c trong Database theo Id
             var category = _context.Categories.Find(id);
 
             if (category == null) return NotFound();
 
-            return View(category); // G?i ??i t??ng tìm ???c sang giao di?n Edit
+            return View(category); // G?i ??i t??ng tï¿½m ???c sang giao di?n Edit
         }
 
-        // 2. Hàm POST: Nh?n d? li?u m?i t? ng??i dùng và l?u l?i
+        // 2. Hï¿½m POST: Nh?n d? li?u m?i t? ng??i dï¿½ng vï¿½ l?u l?i
         [HttpPost]
         public IActionResult Edit(Category model)
         {
-            // L?nh c?p nh?t ??i t??ng vào b? nh? t?m
+            // L?nh c?p nh?t ??i t??ng vï¿½o b? nh? t?m
             _context.Categories.Update(model);
 
             // L?u thay ??i th?c s? xu?ng SQL Server 
             _context.SaveChanges();
 
-            // Quay l?i trang danh sách ?? xem k?t qu?
+            // Quay l?i trang danh sï¿½ch ?? xem k?t qu?
             return RedirectToAction("Index");
         }
     }

@@ -43,7 +43,7 @@ namespace duybao.Backend.Controllers
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
                     new ClaimsPrincipal(claimsIdentity));
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Category");
             }
 
             ViewBag.Error = "T�n ??ng nh?p ho?c m?t kh?u kh�ng ?�ng!";

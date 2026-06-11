@@ -1,6 +1,7 @@
 import React from "react";
 import CategoryProductList from "./components/CategoryProductList";
 import PostList from "./components/PostList";
+import BlogCategoryList from "./components/BlogCategoryList"; // 1. Import Component bài tập tự làm vào đây
 import "./App.css";
 
 function App() {
@@ -17,12 +18,16 @@ function App() {
       </header>
 
       <div className="row">
-        {/* Cột trái: Bộ lọc Phân loại sản phẩm thời trang (Đã làm ở buổi trước) */}
+        {/* CỘT TRÁI: CHỨA CÁC BỘ LỌC PHÂN LOẠI DỮ LIỆU */}
         <div className="col-md-3">
+          {/* Phân loại phục vụ thương mại điện tử (Đã làm ở buổi trước) */}
           <CategoryProductList />
+
+          {/* BÀI TẬP TỰ LÀM: Phân loại phục vụ quản trị nội dung tin tức blog */}
+          <BlogCategoryList />
         </div>
 
-        {/* Cột phải: Danh sách bài viết tin tức lấy Real-time từ Database bằng useEffect */}
+        {/* CỘT PHẢI: CHỨA NỘI DUNG CHI TIẾT HIỂN THỊ CHÍNH */}
         <div className="col-md-9">
           <PostList />
         </div>

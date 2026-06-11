@@ -87,5 +87,20 @@ namespace duybao.Backend.Controllers
             // Quay l?i trang danh s�ch ?? xem k?t qu?
             return RedirectToAction("Index");
         }
+        // ──────────────────────────────────────────────────────────────
+        //  API: Lấy danh sách chuyên mục bài viết (tin tức)
+        //  GET:  /api/Categories
+        // ──────────────────────────────────────────────────────────────
+        [Route("api/Categories")]
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult GetCategories()
+        {
+            var categories = _context.Categories
+                .OrderBy(c => c.Name)
+                .Select(c => new { c.Id, c.Name, c.Description })
+                .ToList();
+            return Json(categories);
+        }
     }
 }

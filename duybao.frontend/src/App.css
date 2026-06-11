@@ -1,38 +1,113 @@
-.App {
-  text-align: center;
+/* =============================================
+   ThaiCMS.Fashion - Custom Styles
+   ============================================= */
+
+/* Reset & Base */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Navbar active */
+.navbar .nav-item.active .nav-link {
+    color: #dc3545 !important;
+    font-weight: 600;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Section Titles */
+.section-title {
+    position: relative;
+    padding-bottom: 12px;
+    margin-bottom: 30px;
+}
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: #dc3545;
+    border-radius: 2px;
+}
+.section-title.text-center::after {
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Product card hover effect */
+.product-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+.product-card .card-img-top {
+    transition: transform 0.3s ease;
+}
+.product-card:hover .card-img-top {
+    transform: scale(1.05);
 }
 
-.App-link {
-  color: #61dafb;
+/* Category tabs */
+.category-tab {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #dee2e6;
+    color: #495057;
+}
+.category-tab:hover,
+.category-tab.active {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Blog card */
+.blog-card {
+    transition: all 0.3s ease;
+}
+.blog-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Price styling */
+.price-current {
+    color: #dc3545;
+    font-weight: 700;
+}
+.price-old {
+    color: #adb5bd;
+    text-decoration: line-through;
+    font-size: 0.85rem;
+}
+
+/* Badge sale */
+.badge-sale {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Gap utility */
+.gap-2 {
+    gap: 0.5rem;
+}
+
+/* Footer links */
+footer a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+footer a:hover {
+    color: white !important;
 }

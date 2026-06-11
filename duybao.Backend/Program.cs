@@ -22,16 +22,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/AccessDenied";
     });
 
-// Đăng ký CORS - Cho phép tất cả các nguồn gốc (chỉ dùng trong môi trường phát triển)
+// ---- CẤU HÌNH CORS (THÊM VÀO TRƯỚC builder.Build()) ----
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // Cho phép ReactJS ở port 3000 gọi tới
+              .AllowAnyHeader()                     // Cho phép mọi loại Header (Content-Type, Authorization...)
+              .AllowAnyMethod()                     // Cho phép mọi phương thức HTTP (GET, POST, PUT, DELETE)
+              .AllowCredentials();                  // Hỗ trợ truyền Cookie/Session nếu cần sau này
+    });
 });
 
 // Đăng ký DbContext vào hệ thống với MySQL
@@ -80,7 +80,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // [VỊ TRÍ ĐẶT CORS]: Phải nằm ngay giữa UseRouting và UseAuthentication/UseAuthorization
-app.UseCors("AllowAll");
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 app.UseAuthorization();

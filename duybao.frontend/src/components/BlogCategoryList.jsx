@@ -1,28 +1,37 @@
 import React, { useState, useEffect } from "react";
 import blogService from "../services/blogService";
 
+const sampleBlogCategories = [
+  { id: 1, name: "Xu hướng thời trang" },
+  { id: 2, name: "Bí quyết phối đồ" },
+  { id: 3, name: "Sự kiện & Khuyến mãi" },
+  { id: 4, name: "Tư vấn làm đẹp" },
+];
+
 const BlogCategoryList = () => {
-  // Kho lưu trữ danh sách chuyên mục bài viết lấy từ SQL Server
   const [blogCategories, setBlogCategories] = useState([]);
-  // Trạng thái tối ưu trải nghiệm người dùng trong lúc đợi API phản hồi
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBlogCategories = async () => {
       try {
         setLoading(true);
-        // Gọi sang lớp Service chứa trục Axios tập trung
         const data = await blogService.getBlogCategories();
-        setBlogCategories(data); // Đẩy dữ liệu JSON nhận được vào State
+        if (data && data.length > 0) {
+          setBlogCategories(data);
+        } else {
+          setBlogCategories(sampleBlogCategories);
+        }
       } catch (error) {
         console.error("Lỗi hệ thống khi gọi API chuyên mục tin tức:", error);
+        setBlogCategories(sampleBlogCategories);
       } finally {
-        setLoading(false); // Đóng trạng thái Loading
+        setLoading(false);
       }
     };
 
     fetchBlogCategories();
-  }, []); // Mảng rỗng đảm bảo không xảy ra vòng lặp render vô hạn làm treo trình duyệt
+  }, []);
 
   if (loading) {
     return (
@@ -31,6 +40,9 @@ const BlogCategoryList = () => {
       </div>
     );
   }
+
+  const displayCategories =
+    blogCategories.length > 0 ? blogCategories : sampleBlogCategories;
 
   return (
     <div className="card shadow-sm border-0 rounded-lg mt-4">
@@ -48,25 +60,19 @@ const BlogCategoryList = () => {
       </div>
       <div className="card-body p-0">
         <div className="list-group list-group-flush">
-          {blogCategories.length === 0 ? (
-            <div className="p-4 text-center text-muted">
-              Chưa có chủ đề tin tức nào.
-            </div>
-          ) : (
-            blogCategories.map((cate) => (
-              <a
-                key={cate.id}
-                href="#"
-                className="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-4 py-3"
-                style={{ fontSize: "0.95rem", color: "#495057" }}
-              >
-                <span className="font-weight-normal">{cate.name}</span>
-                <span className="badge badge-success badge-pill">
-                  <i className="fa-solid fa-arrow-right"></i>
-                </span>
-              </a>
-            ))
-          )}
+          {displayCategories.map((cate) => (
+            <a
+              key={cate.id}
+              href="#"
+              className="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-4 py-3"
+              style={{ fontSize: "0.95rem", color: "#495057" }}
+            >
+              <span className="font-weight-normal">{cate.name}</span>
+              <span className="badge badge-success badge-pill">
+                <i className="fa-solid fa-arrow-right"></i>
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </div>

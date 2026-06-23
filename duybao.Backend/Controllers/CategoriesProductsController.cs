@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using duybao.data;
+using duybao.data.Entities;
 
 namespace duybao.Backend.Controllers
 {
@@ -15,14 +17,14 @@ namespace duybao.Backend.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        // 4. Hàm khởi tạo: Nạp cơ sở dữ liệu SQL Server vào Controller thông qua DI
+        // 4. Hàm khởi tạo: Nạp cơ sở dữ liệu vào Controller thông qua DI
         public CategoriesProductsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         /// <summary>
-        /// API lấy toàn bộ danh mục sản phẩm thời trang (Giao thức GET)
+        /// API lấy toàn bộ danh mục sản phẩm (Giao thức GET)
         /// Đường dẫn gọi dữ liệu: GET https://localhost:xxxx/api/CategoriesProducts
         /// </summary>
         [HttpGet]
@@ -30,28 +32,109 @@ namespace duybao.Backend.Controllers
         {
             try
             {
-                // Bước A: Quét bảng dữ liệu CategoriesProducts số nhiều dưới SQL Server lên
                 var categories = await _context.CategoriesProducts
-                    .OrderBy(c => c.Id) // Sắp xếp theo Id
+                    .OrderBy(c => c.Id)
                     .Select(c => new {
-                        // Bước B: Kỹ thuật gọt tỉa (Projection) - chỉ lấy các trường cần thiết ra FrontEnd
                         c.Id,
                         c.Name,
                         c.Description
                     })
-                    .ToListAsync(); // Chuyển đổi bất đồng bộ sang dạng danh sách mảng
+                    .ToListAsync();
 
-                // Bước C: Trả về mã thành công HTTP 200 OK đính kèm chuỗi chữ JSON sạch
                 return Ok(categories);
             }
             catch (System.Exception ex)
             {
-                // Bảo vệ hệ thống: Nếu sập kết nối SQL thì trả về lỗi 500 kèm lời nhắn lý do lỗi
                 return StatusCode(500, new { 
                     message = "Lỗi kết nối cơ sở dữ liệu hệ thống", 
                     detail = ex.Message 
                 });
             }
+        }
+
+        /// <summary>
+        /// API lấy chi tiết một danh mục sản phẩm theo ID
+        /// GET: /api/CategoriesProducts/{id}
+        /// </summary>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDetail(int id)
+        {
+            var category = await _context.CategoriesProducts
+                .Select(c => new {
+                    c.Id,
+                    c.Name,
+                    c.Description
+                })
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (category == null)
+                return NotFound(new { message = "Không tìm thấy danh mục sản phẩm" });
+
+            return Ok(category);
+        }
+
+        /// <summary>
+        /// API tạo danh mục sản phẩm mới (yêu cầu Admin)
+        /// POST: /api/CategoriesProducts
+        /// </summary>
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([FromBody] CategoryProduct model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (string.IsNullOrWhiteSpace(model.Name))
+                return BadRequest(new { message = "Tên danh mục sản phẩm không được để trống" });
+
+            _context.CategoriesProducts.Add(model);
+            await _context.SaveChangesAsync();
+
+            return StatusCode(201, new { model.Id, model.Name, model.Description });
+        }
+
+        /// <summary>
+        /// API cập nhật danh mục sản phẩm (yêu cầu Admin)
+        /// PUT: /api/CategoriesProducts/{id}
+        /// </summary>
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, [FromBody] CategoryProduct model)
+        {
+            if (id != model.Id)
+                return BadRequest(new { message = "ID danh mục không khớp" });
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var existing = await _context.CategoriesProducts.FindAsync(id);
+            if (existing == null)
+                return NotFound(new { message = "Không tìm thấy danh mục sản phẩm" });
+
+            existing.Name = model.Name;
+            existing.Description = model.Description;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// API xóa danh mục sản phẩm (yêu cầu Admin)
+        /// DELETE: /api/CategoriesProducts/{id}
+        /// </summary>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var category = await _context.CategoriesProducts.FindAsync(id);
+            if (category == null)
+                return NotFound(new { message = "Không tìm thấy danh mục sản phẩm" });
+
+            _context.CategoriesProducts.Remove(category);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

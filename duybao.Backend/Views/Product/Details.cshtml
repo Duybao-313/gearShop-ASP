@@ -18,14 +18,58 @@
             <div class="card shadow">
                 <div class="row g-0">
                     <div class="col-md-5">
-                        <img src="@Model.ImageUrl" class="img-fluid rounded-start" alt="@Model.Name" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img id="mainImage" src="@Model.ImageUrl" class="img-fluid rounded-start" alt="@Model.Name" style="width: 100%; height: 350px; object-fit: cover;" onerror="this.src='https://placehold.co/400x500/333/fff?text=No+Image'">
+                        @if (Model.ImageList != null && Model.ImageList.Count > 0)
+                        {
+                            <div class="row mt-2 g-1">
+                                @foreach (var img in Model.ImageList)
+                                {
+                                    <div class="col-4">
+                                        <img src="@img" class="img-thumbnail" style="height: 80px; width: 100%; object-fit: cover; cursor: pointer;" onclick="document.getElementById('mainImage').src='@img'" onerror="this.style.display='none'">
+                                    </div>
+                                }
+                            </div>
+                        }
                     </div>
                     <div class="col-md-7">
                         <div class="card-body">
                             <span class="badge bg-info text-dark mb-2">@Model.CategoryProduct?.Name</span>
+                            @if (!string.IsNullOrEmpty(Model.Brand))
+                            {
+                                <span class="badge bg-secondary mb-2">@Model.Brand</span>
+                            }
+                            @if (Model.DiscountPercentage > 0)
+                            {
+                                <span class="badge bg-danger mb-2">-@Model.DiscountPercentage%</span>
+                            }
                             <h1 class="display-5 fw-bold text-primary">@Model.Name</h1>
-                            
-                            <h3 class="text-success fw-bold mt-3">@string.Format("{0:N0} VNĐ", Model.Price)</h3>
+
+                            <div class="mb-2">
+                                <span class="text-warning fs-5">
+                                    @for (int i = 0; i < (int)Math.Floor(Model.Rating); i++)
+                                    {
+                                        <span>⭐</span>
+                                    }
+                                    @if (Model.Rating % 1 >= 0.5m)
+                                    {
+                                        <span>✨</span>
+                                    }
+                                </span>
+                                <span class="text-muted ms-2">@Model.Rating.ToString("0.0") / 5</span>
+                            </div>
+
+                            @if (Model.DiscountPercentage > 0)
+                            {
+                                var discountedPrice = Model.Price * (1 - Model.DiscountPercentage / 100);
+                                <h3 class="text-success fw-bold mt-2">
+                                    @string.Format("{0:N0} VNĐ", discountedPrice)
+                                    <small class="text-muted text-decoration-line-through fs-6">@string.Format("{0:N0} VNĐ", Model.Price)</small>
+                                </h3>
+                            }
+                            else
+                            {
+                                <h3 class="text-success fw-bold mt-2">@string.Format("{0:N0} VNĐ", Model.Price)</h3>
+                            }
                             
                             <hr />
                             
@@ -35,11 +79,36 @@
                             </div>
 
                             <div class="mb-3">
+                                <span class="text-muted small">SKU: <strong>@(Model.Sku ?? "Chưa có")</strong></span>
+                            </div>
+
+                            <div class="mb-3">
                                 <span class="badge @(Model.StockQuantity > 0 ? "bg-success" : "bg-danger") fs-6">
                                     @(Model.StockQuantity > 0 ? "Còn hàng" : "Hết hàng")
                                 </span>
                                 <span class="text-muted ms-2">Số lượng tồn kho: @Model.StockQuantity</span>
                             </div>
+
+                            <hr />
+
+                            @if (Model.Reviews != null && Model.Reviews.Any())
+                            {
+                                <h5 class="fw-bold">📝 Đánh giá từ người dùng (@Model.Reviews.Count):</h5>
+                                @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedDate))
+                                {
+                                    <div class="border rounded p-2 mb-2 bg-light">
+                                        <strong>@review.ReviewerName</strong>
+                                        <span class="text-warning">
+                                            @for (int i = 0; i < review.Rating; i++)
+                                            {
+                                                <span>⭐</span>
+                                            }
+                                        </span>
+                                        <small class="text-muted">@review.CreatedDate.ToString("dd/MM/yyyy")</small>
+                                        <p class="mb-0 mt-1">@review.Comment</p>
+                                    </div>
+                                }
+                            }
 
                             <div class="mt-4">
                                 <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">

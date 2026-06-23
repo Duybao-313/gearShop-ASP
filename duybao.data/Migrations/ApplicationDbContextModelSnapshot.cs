@@ -41,38 +41,6 @@ namespace duybao.data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Cập nhật xu hướng AI, IoT và lập trình.",
-                            Name = "Tin tức Công nghệ"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Kinh nghiệm phượt và các điểm đến hấp dẫn.",
-                            Name = "Đời sống du lịch"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Các bài tập và chế độ ăn uống lành mạnh.",
-                            Name = "Sức khỏe Thể thao"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Phương pháp học tập và kỹ năng mềm.",
-                            Name = "Giáo dục Kỹ năng"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "Tài liệu ASP.NET Core và SQL Server.",
-                            Name = "Góc lập trình viên"
-                        });
                 });
 
             modelBuilder.Entity("duybao.data.Entities.CategoryProduct", b =>
@@ -214,53 +182,6 @@ namespace duybao.data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Posts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 5,
-                            Content = "Hướng dẫn chi tiết cho người mới bắt đầu...",
-                            CreatedDate = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "/img/dotnet.jpg",
-                            Title = "Lộ trình học ASP.NET"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 2,
-                            Content = "Những địa điểm không thể bỏ qua mùa hè này...",
-                            CreatedDate = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "/img/beach.jpg",
-                            Title = "Top 5 bãi biển đẹp"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryId = 3,
-                            Content = "Lợi ích tuyệt vời của việc chạy bộ mỗi sáng...",
-                            CreatedDate = new DateTime(2026, 4, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "/img/run.jpg",
-                            Title = "Chạy bộ đúng cách"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CategoryId = 1,
-                            Content = "Trí tuệ nhân tạo đang thay đổi cuộc sống...",
-                            CreatedDate = new DateTime(2026, 4, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "/img/ai.jpg",
-                            Title = "AI và tương lai"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CategoryId = 4,
-                            Content = "Cách phối hợp hiệu quả trong nhóm đồ án...",
-                            CreatedDate = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "/img/team.jpg",
-                            Title = "Kỹ năng Teamwork"
-                        });
                 });
 
             modelBuilder.Entity("duybao.data.Entities.Product", b =>
@@ -271,21 +192,39 @@ namespace duybao.data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Brand")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<int>("CategoryProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
+                    b.Property<decimal>("DiscountPercentage")
+                        .HasColumnType("decimal(5,2)");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Images")
+                        .HasColumnType("LONGTEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(3,2)");
+
+                    b.Property<string>("Sku")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
@@ -295,6 +234,42 @@ namespace duybao.data.Migrations
                     b.HasIndex("CategoryProductId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("duybao.data.Entities.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReviewerEmail")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ReviewerName")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("duybao.data.Entities.User", b =>
@@ -324,48 +299,6 @@ namespace duybao.data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FullName = "Quản trị viên hệ thống",
-                            PasswordHash = "123456",
-                            Role = "Admin",
-                            Username = "admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FullName = "Nguyễn Cao Thái",
-                            PasswordHash = "thai1969",
-                            Role = "Editor",
-                            Username = "thai_gv"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            FullName = "Nguyễn Văn A",
-                            PasswordHash = "student1",
-                            Role = "User",
-                            Username = "sv_01"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            FullName = "Trần Thị B",
-                            PasswordHash = "student2",
-                            Role = "User",
-                            Username = "sv_02"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            FullName = "Lê Văn C",
-                            PasswordHash = "mod789",
-                            Role = "Moderator",
-                            Username = "moderator"
-                        });
                 });
 
             modelBuilder.Entity("duybao.data.Entities.Order", b =>
@@ -420,6 +353,17 @@ namespace duybao.data.Migrations
                     b.Navigation("CategoryProduct");
                 });
 
+            modelBuilder.Entity("duybao.data.Entities.Review", b =>
+                {
+                    b.HasOne("duybao.data.Entities.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("duybao.data.Entities.Category", b =>
                 {
                     b.Navigation("Posts");
@@ -438,6 +382,11 @@ namespace duybao.data.Migrations
             modelBuilder.Entity("duybao.data.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("duybao.data.Entities.Product", b =>
+                {
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

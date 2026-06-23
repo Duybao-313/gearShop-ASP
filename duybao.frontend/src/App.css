@@ -1,52 +1,142 @@
 /* =============================================
-   ThaiCMS.Fashion - Custom Styles
+   GEAR TECH - Gaming Gear Custom Styles
    ============================================= */
 
 /* Reset & Base */
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
+  background-color: #f9f9f9;
+  color: #1a1c1c;
 }
 
 /* Navbar active */
-.navbar .nav-item.active .nav-link {
-  color: #dc3545 !important;
+.navbar .nav-link.active {
+  color: #000 !important;
   font-weight: 600;
+  border-bottom: 2px solid #000;
 }
 
-/* ===== BANNER HERO ===== */
-.banner-hero {
-  background: linear-gradient(135deg, #fff5f5 0%, #fff 50%, #f0f4ff 100%);
-  border-bottom: 1px solid #f0f0f0;
+/* ===== HERO SECTION ===== */
+.hero-section {
+  background: linear-gradient(135deg, #f5f5f5 0%, #fff 50%, #f0f0f0 100%);
+  border-bottom: 1px solid #e0e0e0;
 }
-.banner-image-wrapper {
+.hero-image-wrapper {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 350px;
+  min-height: 400px;
 }
-.banner-circle {
-  width: 280px;
-  height: 280px;
+.hero-circle {
+  width: 300px;
+  height: 300px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #dc3545, #ff6b6b);
-  opacity: 0.08;
+  background: linear-gradient(135deg, #1a1a1a, #333);
+  opacity: 0.06;
   position: absolute;
 }
-.banner-icon {
+.hero-icon {
   font-size: 10rem !important;
-  opacity: 0.2;
+  opacity: 0.15;
   animation: float 3s ease-in-out infinite;
 }
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+/* ===== CATEGORY CARDS ===== */
+.category-card {
+  display: block;
+  color: #1a1a1a;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+.category-card:hover {
+  background: #1a1a1a;
+  color: #fff !important;
+  text-decoration: none;
+}
+.category-icon {
+  font-size: 2.2rem;
+  display: block;
+  transition: all 0.3s ease;
+}
+.category-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+/* ===== PRODUCT GEAR CARD ===== */
+.product-gear-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.product-gear-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1) !important;
+  border-color: #1a1a1a !important;
+}
+.product-gear-img-wrapper {
+  position: relative;
+  overflow: hidden;
+  height: 260px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-gear-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.product-gear-card:hover .product-gear-img-wrapper img {
+  transform: scale(1.08);
+}
+.product-gear-card .btn-outline-dark:hover {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+/* ===== BLOG GEAR CARD ===== */
+.blog-gear-card {
+  transition: all 0.3s ease;
+}
+.blog-gear-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+.blog-gear-img-wrapper {
+  position: relative;
+  overflow: hidden;
+  height: 220px;
+  background: #f5f5f5;
+}
+.blog-gear-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.blog-gear-card:hover .blog-gear-img-wrapper img {
+  transform: scale(1.05);
+}
+
+/* ===== PROMO GRID OVERLAY ===== */
+.promo-grid-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  pointer-events: none;
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, #fff 1px, transparent 1px),
+    linear-gradient(to bottom, #fff 1px, transparent 1px);
 }
 
 /* ===== SECTION TITLES ===== */
@@ -62,7 +152,7 @@ body {
   left: 0;
   width: 60px;
   height: 3px;
-  background-color: #dc3545;
+  background-color: #1a1a1a;
   border-radius: 2px;
 }
 .section-title.text-center::after {
@@ -70,7 +160,7 @@ body {
   transform: translateX(-50%);
 }
 
-/* ===== PRODUCT CARD ===== */
+/* Keep legacy product-card styles for ProductsPage */
 .product-card {
   transition: all 0.3s ease;
   cursor: pointer;
@@ -79,7 +169,7 @@ body {
 .product-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1) !important;
-  border-color: #dc3545 !important;
+  border-color: #1a1a1a !important;
 }
 .product-img-wrapper {
   overflow: hidden;
@@ -96,7 +186,7 @@ body {
   transform: scale(1.08);
 }
 .price-current {
-  color: #dc3545;
+  color: #1a1a1a;
   font-weight: 700;
   font-size: 1.15rem;
 }
@@ -106,7 +196,7 @@ body {
   font-size: 0.85rem;
 }
 
-/* ===== BLOG CARD ===== */
+/* ===== BLOG CARD (Legacy) ===== */
 .blog-card {
   transition: all 0.3s ease;
   border: 1px solid #f0f0f0 !important;
@@ -134,7 +224,7 @@ body {
   position: absolute;
   top: 15px;
   left: 15px;
-  background: #dc3545;
+  background: #1a1a1a;
   color: white;
   padding: 6px 12px;
   border-radius: 8px;
@@ -142,10 +232,10 @@ body {
   min-width: 50px;
   line-height: 1.2;
   font-size: 0.85rem;
-  box-shadow: 0 3px 10px rgba(220, 53, 69, 0.3);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== CATEGORY BAR (Horizontal) ===== */
+/* ===== CATEGORY BAR ===== */
 .category-bar-wrapper {
   background: white;
   padding: 16px 20px;
@@ -168,18 +258,16 @@ body {
   white-space: nowrap;
 }
 .category-pill:hover {
-  border-color: #dc3545;
-  color: #dc3545;
-  background: #fff5f5;
+  border-color: #1a1a1a;
+  color: #1a1a1a;
+  background: #f5f5f5;
 }
 .category-pill.active {
-  background: #dc3545;
+  background: #1a1a1a;
   color: white;
-  border-color: #dc3545;
-  box-shadow: 0 3px 10px rgba(220, 53, 69, 0.25);
+  border-color: #1a1a1a;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
 }
-
-/* Category tabs (legacy) */
 .category-tab {
   cursor: pointer;
   transition: all 0.2s ease;
@@ -188,9 +276,9 @@ body {
 }
 .category-tab:hover,
 .category-tab.active {
-  background-color: #dc3545;
+  background-color: #1a1a1a;
   color: white;
-  border-color: #dc3545;
+  border-color: #1a1a1a;
 }
 
 /* Badge sale */
@@ -213,8 +301,8 @@ html {
 
 /* List group item hover */
 .list-group-item-action:hover {
-  background-color: #fff5f5 !important;
-  color: #dc3545 !important;
+  background-color: #f5f5f5 !important;
+  color: #1a1a1a !important;
 }
 
 /* Footer links */
@@ -230,4 +318,20 @@ footer a:hover {
 .spinner-border {
   width: 2.5rem;
   height: 2.5rem;
+}
+
+/* Newsletter input */
+.newsletter-input:focus {
+  box-shadow: none;
+  border-color: #1a1a1a;
+}
+
+/* Responsive category cards */
+@media (max-width: 768px) {
+  .category-card {
+    border: 1px solid #e0e0e0;
+  }
+  .category-card.border-right {
+    border-right: 1px solid #e0e0e0 !important;
+  }
 }

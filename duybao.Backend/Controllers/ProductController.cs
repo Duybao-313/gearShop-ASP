@@ -41,6 +41,7 @@ namespace duybao.Backend.Controllers
         {
             var product = _context.Products
                 .Include(p => p.CategoryProduct)
+                .Include(p => p.Reviews)
                 .FirstOrDefault(p => p.Id == id);
 
             if (product == null)
@@ -65,7 +66,7 @@ namespace duybao.Backend.Controllers
 
         // POST: Lưu sản phẩm mới (có upload ảnh)
         [HttpPost]
-        public IActionResult Create(Product model, IFormFile uploadImage)
+        public IActionResult Create(Product model, IFormFile uploadImage, string ImagesText)
         {
             if (uploadImage != null && uploadImage.Length > 0)
             {
@@ -81,6 +82,17 @@ namespace duybao.Backend.Controllers
                 }
 
                 model.ImageUrl = "/uploads/" + fileName;
+            }
+
+            // Xử lý danh sách ảnh từ textarea
+            if (!string.IsNullOrWhiteSpace(ImagesText))
+            {
+                var imageUrls = ImagesText
+                    .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToList();
+                model.ImageList = imageUrls;
             }
 
             _context.Products.Add(model);
@@ -105,7 +117,7 @@ namespace duybao.Backend.Controllers
 
         // POST: Cập nhật sản phẩm
         [HttpPost]
-        public IActionResult Edit(Product model, IFormFile uploadImage)
+        public IActionResult Edit(Product model, IFormFile uploadImage, string ImagesText)
         {
             // Nếu có upload ảnh mới
             if (uploadImage != null && uploadImage.Length > 0)
@@ -131,6 +143,17 @@ namespace duybao.Backend.Controllers
                 {
                     model.ImageUrl = oldProduct.ImageUrl;
                 }
+            }
+
+            // Xử lý danh sách ảnh từ textarea
+            if (!string.IsNullOrWhiteSpace(ImagesText))
+            {
+                var imageUrls = ImagesText
+                    .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToList();
+                model.ImageList = imageUrls;
             }
 
             _context.Products.Update(model);

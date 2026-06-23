@@ -8,7 +8,7 @@ const TopBar = () => {
                     <div className="col-md-6 text-center text-md-left">
                         <small>
                             <i className="fa-solid fa-phone mr-1"></i> Hotline: 0123 456 789 |
-                            <i className="fa-regular fa-envelope ml-2 mr-1"></i> support@thaicms.vn
+                            <i className="fa-regular fa-envelope ml-2 mr-1"></i> support@geartech.vn
                         </small>
                     </div>
                     <div className="col-md-6 text-center text-md-right">

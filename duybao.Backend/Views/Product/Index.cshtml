@@ -42,10 +42,19 @@
                     <img src="@item.ImageUrl" class="card-img-top" alt="Thumbnail" style="height: 200px; object-fit: cover;">
                     <div class="card-body">
                         <span class="badge bg-info text-dark">@item.CategoryProduct?.Name</span>
-                        <h5 class="card-title text-primary">@item.Name</h5>
+                        @if (!string.IsNullOrEmpty(item.Brand))
+                        {
+                            <span class="badge bg-secondary">@item.Brand</span>
+                        }
+                        @if (item.DiscountPercentage > 0)
+                        {
+                            <span class="badge bg-danger">-@item.DiscountPercentage%</span>
+                        }
+                        <h5 class="card-title text-primary mt-1">@item.Name</h5>
                         <p class="card-text text-truncate">@item.Description</p>
                         <p class="text-success fw-bold">@string.Format("{0:N0} VNĐ", item.Price)</p>
                         <p class="text-muted small">
+                            <span>⭐ @item.Rating.ToString("0.0")</span> &nbsp;|&nbsp;
                             Tồn kho: @item.StockQuantity
                         </p>
                         <a href="/Product/Details/@item.Id" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>

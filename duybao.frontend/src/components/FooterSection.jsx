@@ -7,49 +7,51 @@ const FooterSection = () => {
                 <div className="row">
                     {/* Company Info */}
                     <div className="col-lg-4 mb-4">
-                        <h5 className="font-weight-bold text-uppercase mb-3">
-                            <i className="fa-solid fa-crown text-primary mr-2"></i>ThaiCMS.Fashion
+                        <h5 className="font-weight-bold text-uppercase mb-3"
+                            style={{ letterSpacing: "2px" }}>
+                            <i className="fa-solid fa-microchip mr-2"></i>GEAR TECH
                         </h5>
-                        <p className="text-muted small">
-                            Hệ thống thời trang trực tuyến hàng đầu Việt Nam. Cam kết sản phẩm chính hãng, chất lượng cao.
+                        <p className="text-muted small" style={{ maxWidth: "280px" }}>
+                            Phần cứng gaming precision-engineered dành cho game thủ chuyên nghiệp. Hiệu năng đỉnh cao, thiết kế tối giản.
                         </p>
                         <div className="text-muted small">
-                            <p className="mb-1"><i className="fa-solid fa-location-dot mr-2"></i>123 Nguyễn Huệ, Quận 1, TP.HCM</p>
+                            <p className="mb-1"><i className="fa-solid fa-location-dot mr-2"></i>1200 Tech Plaza, Floor 42, San Francisco</p>
                             <p className="mb-1"><i className="fa-solid fa-phone mr-2"></i>0123 456 789</p>
-                            <p className="mb-1"><i className="fa-regular fa-envelope mr-2"></i>support@thaicms.vn</p>
+                            <p className="mb-1"><i className="fa-regular fa-envelope mr-2"></i>support@geartech.vn</p>
                         </div>
                     </div>
 
-                    {/* Policy Links */}
+                    {/* Shop Links */}
                     <div className="col-lg-2 col-md-4 mb-4">
-                        <h6 className="font-weight-bold text-uppercase mb-3">Chính Sách</h6>
+                        <h6 className="font-weight-bold text-uppercase mb-3" style={{ letterSpacing: "1px" }}>Shop</h6>
                         <ul className="list-unstyled text-muted small">
-                            <li className="mb-2"><a href="#" className="text-muted">Chính sách đổi trả</a></li>
-                            <li className="mb-2"><a href="#" className="text-muted">Chính sách bảo mật</a></li>
-                            <li className="mb-2"><a href="#" className="text-muted">Chính sách vận chuyển</a></li>
-                            <li className="mb-2"><a href="#" className="text-muted">Hướng dẫn mua hàng</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Chuột Gaming</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Bàn Phím Cơ</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Tai Nghe</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Màn Hình</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Linh Kiện</a></li>
                         </ul>
                     </div>
 
                     {/* Support */}
                     <div className="col-lg-2 col-md-4 mb-4">
-                        <h6 className="font-weight-bold text-uppercase mb-3">Hỗ Trợ</h6>
+                        <h6 className="font-weight-bold text-uppercase mb-3" style={{ letterSpacing: "1px" }}>Hỗ Trợ</h6>
                         <ul className="list-unstyled text-muted small">
-                            <li className="mb-2"><a href="#" className="text-muted">Trung tâm trợ giúp</a></li>
-                            <li className="mb-2"><a href="#" className="text-muted">Thanh toán</a></li>
-                            <li className="mb-2"><a href="#" className="text-muted">Góp ý & khiếu nại</a></li>
-                            <li className="mb-2"><a href="#" className="text-muted">Tuyển dụng</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Bảo Hành</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Vận Chuyển</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Liên Hệ</a></li>
+                            <li className="mb-2"><a href="#" className="text-muted">Sitemap</a></li>
                         </ul>
                     </div>
 
                     {/* Newsletter */}
                     <div className="col-lg-4 col-md-4 mb-4">
-                        <h6 className="font-weight-bold text-uppercase mb-3">Đăng Ký Nhận Tin</h6>
-                        <p className="text-muted small">Nhận ưu đãi và xu hướng thời trang mới nhất qua email.</p>
+                        <h6 className="font-weight-bold text-uppercase mb-3" style={{ letterSpacing: "1px" }}>Đăng Ký Nhận Tin</h6>
+                        <p className="text-muted small">Nhận thông báo sớm về sản phẩm mới, firmware updates và insights gaming.</p>
                         <div className="input-group">
                             <input type="email" className="form-control form-control-sm" placeholder="Email của bạn..." />
                             <div className="input-group-append">
-                                <button className="btn btn-primary btn-sm" type="button">Đăng ký</button>
+                                <button className="btn btn-light btn-sm text-dark" type="button">Đăng ký</button>
                             </div>
                         </div>
                         <div className="mt-3">
@@ -63,7 +65,7 @@ const FooterSection = () => {
 
                 <hr className="border-secondary" />
                 <div className="text-center text-muted small">
-                    <p className="mb-0">© 2026 ThaiCMS.Fashion - Đồ án thực hành ASP.NET Core Web API + ReactJS. All rights reserved.</p>
+                    <p className="mb-0">&copy; 2026 GEAR TECH PRECISION. ALL RIGHTS RESERVED. &mdash; Đồ án ASP.NET Core + ReactJS.</p>
                 </div>
             </div>
         </footer>

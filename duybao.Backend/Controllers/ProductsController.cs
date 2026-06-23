@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using duybao.data;
+using duybao.data.Entities;
 
 namespace duybao.Backend.Controllers
 {
@@ -25,17 +27,29 @@ namespace duybao.Backend.Controllers
         //  GET:  /api/products
         // ──────────────────────────────────────────────────────────────
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int? categoryProductId)
         {
-            var products = await _context.Products
+            IQueryable<Product> query = _context.Products
+                .Include(p => p.CategoryProduct);
+
+            // Lọc theo danh mục sản phẩm nếu có truyền query param
+            if (categoryProductId.HasValue)
+            {
+                query = query.Where(p => p.CategoryProductId == categoryProductId.Value);
+            }
+
+            var products = await query
                 .OrderByDescending(p => p.Id)
                 .Select(p => new
                 {
                     p.Id,
                     p.Name,
+                    p.Description,
                     p.Price,
+                    p.StockQuantity,
                     p.ImageUrl,
-                    p.StockQuantity
+                    p.CategoryProductId,
+                    CategoryProduct = p.CategoryProduct != null ? new { p.CategoryProduct.Id, p.CategoryProduct.Name } : null
                 })
                 .ToListAsync();
 
@@ -72,6 +86,7 @@ namespace duybao.Backend.Controllers
         public async Task<IActionResult> GetDetail(int id)
         {
             var product = await _context.Products
+                .Include(p => p.CategoryProduct)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
@@ -79,7 +94,95 @@ namespace duybao.Backend.Controllers
                 return NotFound(new { message = "Không tìm thấy sản phẩm này trong hệ thống" });
             }
 
-            return Ok(product);
+            return Ok(new
+            {
+                product.Id,
+                product.Name,
+                product.Description,
+                product.Price,
+                product.StockQuantity,
+                product.ImageUrl,
+                product.CategoryProductId,
+                CategoryProduct = product.CategoryProduct != null ? new { product.CategoryProduct.Id, product.CategoryProduct.Name } : null
+            });
+        }
+
+        // ──────────────────────────────────────────────────────────────
+        //  API: Tạo sản phẩm mới (yêu cầu đăng nhập Admin)
+        //  POST: /api/products
+        // ──────────────────────────────────────────────────────────────
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([FromBody] Product product)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (string.IsNullOrWhiteSpace(product.Name))
+                return BadRequest(new { message = "Tên sản phẩm không được để trống" });
+
+            if (product.Price <= 0)
+                return BadRequest(new { message = "Giá sản phẩm phải lớn hơn 0" });
+
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+
+            return StatusCode(201, new
+            {
+                product.Id,
+                product.Name,
+                product.Price,
+                product.CategoryProductId
+            });
+        }
+
+        // ──────────────────────────────────────────────────────────────
+        //  API: Cập nhật sản phẩm (yêu cầu đăng nhập Admin)
+        //  PUT:  /api/products/{id}
+        // ──────────────────────────────────────────────────────────────
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, [FromBody] Product product)
+        {
+            if (id != product.Id)
+                return BadRequest(new { message = "ID sản phẩm không khớp" });
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var existing = await _context.Products.FindAsync(id);
+            if (existing == null)
+                return NotFound(new { message = "Không tìm thấy sản phẩm" });
+
+            // Cập nhật các trường
+            existing.Name = product.Name;
+            existing.Description = product.Description;
+            existing.Price = product.Price;
+            existing.StockQuantity = product.StockQuantity;
+            existing.ImageUrl = product.ImageUrl;
+            existing.CategoryProductId = product.CategoryProductId;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // ──────────────────────────────────────────────────────────────
+        //  API: Xóa sản phẩm (yêu cầu đăng nhập Admin)
+        //  DELETE: /api/products/{id}
+        // ──────────────────────────────────────────────────────────────
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+                return NotFound(new { message = "Không tìm thấy sản phẩm" });
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

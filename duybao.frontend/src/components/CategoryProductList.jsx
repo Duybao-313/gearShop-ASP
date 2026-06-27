@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import categoryProductService from "../services/categoryProductService";
 
-const sampleCategories = [
-  { id: 1, name: "Trang phục nữ mặc ở nhà" },
-  { id: 2, name: "Vest & Âu phục nam" },
-  { id: 3, name: "Đầm dạ hội quý phái" },
-  { id: 4, name: "Thời trang công sở nữ" },
-  { id: 5, name: "Phụ kiện thời trang" },
-];
-
 const CategoryProductList = () => {
   const [categoryProducts, setCategoryProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,14 +11,9 @@ const CategoryProductList = () => {
       try {
         setLoading(true);
         const data = await categoryProductService.getAllCategoryProducts();
-        if (data && data.length > 0) {
-          setCategoryProducts(data);
-        } else {
-          setCategoryProducts(sampleCategories);
-        }
+        setCategoryProducts(data || []);
       } catch (error) {
         console.error("Lỗi khi tải danh mục sản phẩm:", error);
-        setCategoryProducts(sampleCategories);
       } finally {
         setLoading(false);
       }
@@ -41,9 +28,6 @@ const CategoryProductList = () => {
     );
   }
 
-  const displayCategories =
-    categoryProducts.length > 0 ? categoryProducts : sampleCategories;
-
   return (
     <div className="category-bar-wrapper">
       <div className="d-flex align-items-center flex-wrap">
@@ -56,7 +40,7 @@ const CategoryProductList = () => {
         >
           Tất cả
         </button>
-        {displayCategories.map((item) => (
+        {categoryProducts.map((item) => (
           <button
             key={item.id}
             className={`category-pill ${activeCategory === item.id ? "active" : ""}`}

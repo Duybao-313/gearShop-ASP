@@ -19,7 +19,7 @@ const ProductsPage = () => {
   // Bộ lọc
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedBrands, setSelectedBrands] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 5000000]);
+  const [priceRange, setPriceRange] = useState([0, 50000000]);
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -54,6 +54,14 @@ const ProductsPage = () => {
     fetchAll();
     fetchCategories();
   }, []);
+
+  // === GIÁ CAO NHẤT THỰC TẾ TỪ DỮ LIỆU ===
+  const maxProductPrice = useMemo(() => {
+    if (products.length === 0) return 50000000;
+    const max = Math.max(...products.map((p) => p.price));
+    // Làm tròn lên bội số 1.000.000 để slider dễ nhìn
+    return Math.ceil(max / 1000000) * 1000000;
+  }, [products]);
 
   // === TRÍCH XUẤT DANH SÁCH THƯƠNG HIỆU TỪ DỮ LIỆU ===
   const availableBrands = useMemo(() => {
@@ -144,7 +152,7 @@ const ProductsPage = () => {
   const handleClearAll = () => {
     setSelectedCategory(null);
     setSelectedBrands([]);
-    setPriceRange([0, 5000000]);
+    setPriceRange([0, maxProductPrice]);
     setSortBy("featured");
   };
 
@@ -241,6 +249,7 @@ const ProductsPage = () => {
                   priceRange={priceRange}
                   onPriceChange={setPriceRange}
                   onClearAll={handleClearAll}
+                  maxPrice={maxProductPrice}
                 />
               )}
             </div>

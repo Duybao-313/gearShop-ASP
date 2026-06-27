@@ -46,8 +46,13 @@ namespace duybao.Backend.Controllers
                     p.Name,
                     p.Description,
                     p.Price,
+                    p.DiscountPercentage,
+                    p.Rating,
                     p.StockQuantity,
                     p.ImageUrl,
+                    p.Images,
+                    p.Brand,
+                    p.Sku,
                     p.CategoryProductId,
                     CategoryProduct = p.CategoryProduct != null ? new { p.CategoryProduct.Id, p.CategoryProduct.Name } : null
                 })
@@ -87,6 +92,7 @@ namespace duybao.Backend.Controllers
         {
             var product = await _context.Products
                 .Include(p => p.CategoryProduct)
+                .Include(p => p.Reviews)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
@@ -100,10 +106,26 @@ namespace duybao.Backend.Controllers
                 product.Name,
                 product.Description,
                 product.Price,
+                product.DiscountPercentage,
+                product.Rating,
                 product.StockQuantity,
                 product.ImageUrl,
+                product.Images,
+                product.Brand,
+                product.Sku,
                 product.CategoryProductId,
-                CategoryProduct = product.CategoryProduct != null ? new { product.CategoryProduct.Id, product.CategoryProduct.Name } : null
+                CategoryProduct = product.CategoryProduct != null ? new { product.CategoryProduct.Id, product.CategoryProduct.Name } : null,
+                Reviews = product.Reviews != null
+                    ? product.Reviews.Select(r => new
+                    {
+                        r.Id,
+                        r.ProductId,
+                        r.Rating,
+                        r.Comment,
+                        r.ReviewerName,
+                        r.CreatedDate
+                    })
+                    : null
             });
         }
 

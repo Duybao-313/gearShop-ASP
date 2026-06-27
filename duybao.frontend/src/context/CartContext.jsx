@@ -10,20 +10,24 @@ const cartReducer = (state, action) => {
   switch (action.type) {
     case "ADD_ITEM": {
       const existingIndex = state.items.findIndex(
-        (item) => item.id === action.payload.id
+        (item) => item.id === action.payload.id,
       );
       if (existingIndex >= 0) {
         // Tăng số lượng nếu sản phẩm đã có
         const updated = [...state.items];
         updated[existingIndex] = {
           ...updated[existingIndex],
-          quantity: updated[existingIndex].quantity + (action.payload.quantity || 1),
+          quantity:
+            updated[existingIndex].quantity + (action.payload.quantity || 1),
         };
         return { ...state, items: updated };
       }
       return {
         ...state,
-        items: [...state.items, { ...action.payload, quantity: action.payload.quantity || 1 }],
+        items: [
+          ...state.items,
+          { ...action.payload, quantity: action.payload.quantity || 1 },
+        ],
       };
     }
 
@@ -37,7 +41,7 @@ const cartReducer = (state, action) => {
       const updated = state.items.map((item) =>
         item.id === action.payload.id
           ? { ...item, quantity: Math.max(1, action.payload.quantity) }
-          : item
+          : item,
       );
       return { ...state, items: updated };
     }
@@ -105,7 +109,7 @@ export const CartProvider = ({ children }) => {
   const totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = state.items.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
   const value = {

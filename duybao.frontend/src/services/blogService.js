@@ -12,6 +12,12 @@ const blogService = {
     const url = "/Categories"; // Cần khớp chính xác với [Route("api/Categories")] trong CategoriesController ở Backend
     return axiosClient.get(url);
   },
+
+  // 3. Lấy chi tiết bài viết theo ID
+  getPostById: (id) => {
+    const url = `/Posts/${id}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default blogService;

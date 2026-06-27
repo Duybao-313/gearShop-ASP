@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import productService from "../services/productService";
 import blogService from "../services/blogService";
+import ProductCard from "../components/ProductCard";
 
 const HomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -38,12 +39,6 @@ const HomePage = () => {
     fetchPosts();
   }, []);
 
-  const formatPrice = (price) =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-
   const newArrivals = featuredProducts.slice(0, 4);
   const bestSellers = featuredProducts.slice(4, 8);
 
@@ -60,26 +55,46 @@ const HomePage = () => {
       {/* ===== HERO SECTION ===== */}
       <section className="hero-section">
         <div className="container">
-          <div className="row align-items-center" style={{ minHeight: "500px" }}>
+          <div
+            className="row align-items-center"
+            style={{ minHeight: "500px" }}
+          >
             <div className="col-lg-6 py-5">
-              <span className="badge badge-dark px-3 py-2 mb-3 font-weight-medium text-uppercase"
-                style={{ letterSpacing: "2px", fontSize: "11px" }}>
+              <span
+                className="badge badge-dark px-3 py-2 mb-3 font-weight-medium text-uppercase"
+                style={{ letterSpacing: "2px", fontSize: "11px" }}
+              >
                 ENGINEERED PRECISION
               </span>
-              <h1 className="display-3 font-weight-bold text-dark mb-3"
-                style={{ letterSpacing: "-1px" }}>
-                PRECISE<br />PERFORMANCE
+              <h1
+                className="display-3 font-weight-bold text-dark mb-3"
+                style={{ letterSpacing: "-1px" }}
+              >
+                PRECISE
+                <br />
+                PERFORMANCE
               </h1>
-              <p className="lead text-muted mb-4" style={{ maxWidth: "420px", lineHeight: 1.8 }}>
-                Nâng tầm trải nghiệm gaming với bộ sưu tập phần cứng ultra-low latency mới nhất.
+              <p
+                className="lead text-muted mb-4"
+                style={{ maxWidth: "420px", lineHeight: 1.8 }}
+              >
+                Nâng tầm trải nghiệm gaming với bộ sưu tập phần cứng ultra-low
+                latency mới nhất.
               </p>
               <div className="d-flex flex-wrap gap-2">
-                <Link to="/products" className="btn btn-dark btn-lg px-4 mr-2 text-uppercase"
-                  style={{ letterSpacing: "1px", fontSize: "13px" }}>
-                  <i className="fa-solid fa-bag-shopping mr-2"></i>Shop Bộ Sưu Tập
+                <Link
+                  to="/products"
+                  className="btn btn-dark btn-lg px-4 mr-2 text-uppercase"
+                  style={{ letterSpacing: "1px", fontSize: "13px" }}
+                >
+                  <i className="fa-solid fa-bag-shopping mr-2"></i>Shop Bộ Sưu
+                  Tập
                 </Link>
-                <a href="#categories" className="btn btn-outline-dark btn-lg px-4 text-uppercase"
-                  style={{ letterSpacing: "1px", fontSize: "13px" }}>
+                <a
+                  href="#categories"
+                  className="btn btn-outline-dark btn-lg px-4 text-uppercase"
+                  style={{ letterSpacing: "1px", fontSize: "13px" }}
+                >
                   <i className="fa-solid fa-microchip mr-2"></i>Xem Thông Số
                 </a>
               </div>
@@ -116,7 +131,10 @@ const HomePage = () => {
               <Link
                 key={index}
                 to={"/products?category=" + cat.slug}
-                className={"col-6 col-md category-card text-center py-4" + (index < 4 ? " border-right" : "")}
+                className={
+                  "col-6 col-md category-card text-center py-4" +
+                  (index < 4 ? " border-right" : "")
+                }
               >
                 <i className={cat.icon + " category-icon"}></i>
                 <span className="d-block mt-2 category-label">{cat.name}</span>
@@ -131,12 +149,23 @@ const HomePage = () => {
         <div className="container">
           <div className="d-flex justify-content-between align-items-end mb-4 pb-3 border-bottom">
             <div>
-              <span className="badge badge-dark px-3 py-1 mb-2 text-uppercase"
-                style={{ letterSpacing: "2px", fontSize: "10px" }}>Mới Ra Mắt</span>
+              <span
+                className="badge badge-dark px-3 py-1 mb-2 text-uppercase"
+                style={{ letterSpacing: "2px", fontSize: "10px" }}
+              >
+                Mới Ra Mắt
+              </span>
               <h2 className="font-weight-bold text-dark mb-0">NEW ARRIVALS</h2>
             </div>
-            <Link to="/products" className="text-dark font-weight-bold small text-uppercase"
-              style={{ letterSpacing: "1px", borderBottom: "2px solid #000", paddingBottom: "2px" }}>
+            <Link
+              to="/products"
+              className="text-dark font-weight-bold small text-uppercase"
+              style={{
+                letterSpacing: "1px",
+                borderBottom: "2px solid #000",
+                paddingBottom: "2px",
+              }}
+            >
               XEM TẤT CẢ <i className="fa-solid fa-arrow-right ml-1"></i>
             </Link>
           </div>
@@ -158,33 +187,7 @@ const HomePage = () => {
               ) : (
                 newArrivals.map((product) => (
                   <div className="col-md-3 mb-4" key={product.id}>
-                    <div className="card product-gear-card h-100 border">
-                      <div className="product-gear-img-wrapper">
-                        <img
-                          src={product.imageUrl || "https://placehold.co/400x400/1a1a1a/666?text=GEAR"}
-                          className="card-img-top"
-                          alt={product.name}
-                        />
-                        <span className="badge badge-dark position-absolute"
-                          style={{ top: "12px", left: "12px", letterSpacing: "1px", fontSize: "10px" }}>
-                          NEW
-                        </span>
-                      </div>
-                      <div className="card-body d-flex flex-column p-4">
-                        <small className="text-muted text-uppercase mb-1"
-                          style={{ fontSize: "10px", letterSpacing: "1px" }}>
-                          {product.brand || "GEAR TECH"} • {product.categoryProduct?.name || "GAMING"}
-                        </small>
-                        <h6 className="font-weight-bold text-dark mb-2">{product.name}</h6>
-                        <p className="card-text font-weight-bold text-dark mb-3 h5">
-                          {formatPrice(product.price)}
-                        </p>
-                        <button className="btn btn-outline-dark btn-sm w-100 mt-auto text-uppercase"
-                          style={{ letterSpacing: "1px", fontSize: "12px" }}>
-                          ADD TO CART
-                        </button>
-                      </div>
-                    </div>
+                    <ProductCard product={product} />
                   </div>
                 ))
               )}
@@ -199,26 +202,44 @@ const HomePage = () => {
           <div className="row no-gutters border overflow-hidden">
             <div className="col-lg-8 bg-dark text-white p-5 d-flex flex-column justify-content-center position-relative">
               <div className="promo-grid-overlay"></div>
-              <span className="badge badge-light text-dark px-3 py-1 mb-3 text-uppercase align-self-start"
-                style={{ letterSpacing: "2px", fontSize: "10px" }}>
+              <span
+                className="badge badge-light text-dark px-3 py-1 mb-3 text-uppercase align-self-start"
+                style={{ letterSpacing: "2px", fontSize: "10px" }}
+              >
                 LIMITED EDITION
               </span>
-              <h2 className="display-4 font-weight-bold mb-3" style={{ letterSpacing: "-1px" }}>
+              <h2
+                className="display-4 font-weight-bold mb-3"
+                style={{ letterSpacing: "-1px" }}
+              >
                 GOLD SERIES: PRECISION REFINED
               </h2>
-              <p className="lead mb-4 text-white-50" style={{ maxWidth: "500px" }}>
-                Phần cứng flagship với điểm nhấn mạ vàng 24k — hiệu năng đỉnh cao kết hợp đẳng cấp.
+              <p
+                className="lead mb-4 text-white-50"
+                style={{ maxWidth: "500px" }}
+              >
+                Phần cứng flagship với điểm nhấn mạ vàng 24k — hiệu năng đỉnh
+                cao kết hợp đẳng cấp.
               </p>
               <div>
-                <Link to="/products" className="btn btn-light btn-lg px-5 text-uppercase"
-                  style={{ letterSpacing: "1px", fontSize: "13px" }}>
+                <Link
+                  to="/products"
+                  className="btn btn-light btn-lg px-5 text-uppercase"
+                  style={{ letterSpacing: "1px", fontSize: "13px" }}
+                >
                   KHÁM PHÁ GOLD SERIES
                 </Link>
               </div>
             </div>
-            <div className="col-lg-4 p-0 d-none d-lg-block" style={{ minHeight: "350px", background: "#f5f5f5" }}>
+            <div
+              className="col-lg-4 p-0 d-none d-lg-block"
+              style={{ minHeight: "350px", background: "#f5f5f5" }}
+            >
               <div className="w-100 h-100 d-flex align-items-center justify-content-center">
-                <i className="fa-solid fa-crown text-warning" style={{ fontSize: "8rem", opacity: 0.6 }}></i>
+                <i
+                  className="fa-solid fa-crown text-warning"
+                  style={{ fontSize: "8rem", opacity: 0.6 }}
+                ></i>
               </div>
             </div>
           </div>
@@ -230,12 +251,23 @@ const HomePage = () => {
         <div className="container">
           <div className="d-flex justify-content-between align-items-end mb-4 pb-3 border-bottom">
             <div>
-              <span className="badge badge-dark px-3 py-1 mb-2 text-uppercase"
-                style={{ letterSpacing: "2px", fontSize: "10px" }}>Yêu Thích Nhất</span>
+              <span
+                className="badge badge-dark px-3 py-1 mb-2 text-uppercase"
+                style={{ letterSpacing: "2px", fontSize: "10px" }}
+              >
+                Yêu Thích Nhất
+              </span>
               <h2 className="font-weight-bold text-dark mb-0">BEST SELLERS</h2>
             </div>
-            <Link to="/products" className="text-dark font-weight-bold small text-uppercase"
-              style={{ letterSpacing: "1px", borderBottom: "2px solid #000", paddingBottom: "2px" }}>
+            <Link
+              to="/products"
+              className="text-dark font-weight-bold small text-uppercase"
+              style={{
+                letterSpacing: "1px",
+                borderBottom: "2px solid #000",
+                paddingBottom: "2px",
+              }}
+            >
               SHOP ALL <i className="fa-solid fa-arrow-right ml-1"></i>
             </Link>
           </div>
@@ -256,29 +288,7 @@ const HomePage = () => {
               ) : (
                 bestSellers.map((product) => (
                   <div className="col-md-3 mb-4" key={product.id}>
-                    <div className="card product-gear-card h-100 border bg-white">
-                      <div className="product-gear-img-wrapper">
-                        <img
-                          src={product.imageUrl || "https://placehold.co/400x400/1a1a1a/666?text=GEAR"}
-                          className="card-img-top"
-                          alt={product.name}
-                        />
-                      </div>
-                      <div className="card-body d-flex flex-column p-4">
-                        <small className="text-muted text-uppercase mb-1"
-                          style={{ fontSize: "10px", letterSpacing: "1px" }}>
-                          {product.brand || "GEAR TECH"} • {product.categoryProduct?.name || "GAMING"}
-                        </small>
-                        <h6 className="font-weight-bold text-dark mb-2">{product.name}</h6>
-                        <p className="card-text font-weight-bold text-dark mb-3 h5">
-                          {formatPrice(product.price)}
-                        </p>
-                        <button className="btn btn-outline-dark btn-sm w-100 mt-auto text-uppercase"
-                          style={{ letterSpacing: "1px", fontSize: "12px" }}>
-                          ADD TO CART
-                        </button>
-                      </div>
-                    </div>
+                    <ProductCard product={product} />
                   </div>
                 ))
               )}
@@ -292,12 +302,23 @@ const HomePage = () => {
         <div className="container">
           <div className="d-flex justify-content-between align-items-end mb-4 pb-3 border-bottom">
             <div>
-              <span className="badge badge-dark px-3 py-1 mb-2 text-uppercase"
-                style={{ letterSpacing: "2px", fontSize: "10px" }}>Kiến Thức &amp; Mẹo</span>
+              <span
+                className="badge badge-dark px-3 py-1 mb-2 text-uppercase"
+                style={{ letterSpacing: "2px", fontSize: "10px" }}
+              >
+                Kiến Thức &amp; Mẹo
+              </span>
               <h2 className="font-weight-bold text-dark mb-0">BLOG GAMING</h2>
             </div>
-            <Link to="/blog" className="text-dark font-weight-bold small text-uppercase"
-              style={{ letterSpacing: "1px", borderBottom: "2px solid #000", paddingBottom: "2px" }}>
+            <Link
+              to="/blog"
+              className="text-dark font-weight-bold small text-uppercase"
+              style={{
+                letterSpacing: "1px",
+                borderBottom: "2px solid #000",
+                paddingBottom: "2px",
+              }}
+            >
               ĐỌC THÊM <i className="fa-solid fa-arrow-right ml-1"></i>
             </Link>
           </div>
@@ -322,28 +343,39 @@ const HomePage = () => {
                     <div className="card blog-gear-card h-100 border">
                       <div className="blog-gear-img-wrapper">
                         <img
-                          src={post.imageUrl || "https://placehold.co/600x350/1a1a1a/666?text=BLOG"}
+                          src={
+                            post.imageUrl ||
+                            "https://placehold.co/600x350/1a1a1a/666?text=BLOG"
+                          }
                           className="card-img-top"
                           alt={post.title}
                         />
                       </div>
                       <div className="card-body d-flex flex-column p-4">
-                        <small className="text-muted text-uppercase mb-2"
-                          style={{ fontSize: "10px", letterSpacing: "1px" }}>
+                        <small
+                          className="text-muted text-uppercase mb-2"
+                          style={{ fontSize: "10px", letterSpacing: "1px" }}
+                        >
                           <i className="fa-regular fa-calendar mr-1"></i>
-                          {new Date(post.createdDate).toLocaleDateString("vi-VN")}
-                          {post.category && (
-                            <> • {post.category.name}</>
+                          {new Date(post.createdDate).toLocaleDateString(
+                            "vi-VN",
                           )}
+                          {post.category && <> • {post.category.name}</>}
                         </small>
-                        <h5 className="font-weight-bold text-dark mb-2">{post.title}</h5>
+                        <h5 className="font-weight-bold text-dark mb-2">
+                          {post.title}
+                        </h5>
                         <p className="card-text text-muted small flex-grow-1">
                           {post.shortDescription ||
                             "Khám phá bài viết chuyên sâu về gaming gear, hướng dẫn build PC và review phụ kiện..."}
                         </p>
-                        <Link to={"/blog/" + post.id} className="text-dark font-weight-bold small text-uppercase mt-2"
-                          style={{ letterSpacing: "1px" }}>
-                          ĐỌC TIẾP <i className="fa-solid fa-arrow-right ml-1"></i>
+                        <Link
+                          to={"/blog/" + post.id}
+                          className="text-dark font-weight-bold small text-uppercase mt-2"
+                          style={{ letterSpacing: "1px" }}
+                        >
+                          ĐỌC TIẾP{" "}
+                          <i className="fa-solid fa-arrow-right ml-1"></i>
                         </Link>
                       </div>
                     </div>
@@ -362,7 +394,8 @@ const HomePage = () => {
             <div className="col-lg-6 mb-4 mb-lg-0">
               <h2 className="font-weight-bold mb-3">SYSTEM UPDATES</h2>
               <p className="text-white-50 mb-0" style={{ maxWidth: "450px" }}>
-                Đăng ký nhận thông báo sớm về sản phẩm mới, cập nhật firmware và insights gaming. Không spam, chỉ performance.
+                Đăng ký nhận thông báo sớm về sản phẩm mới, cập nhật firmware và
+                insights gaming. Không spam, chỉ performance.
               </p>
             </div>
             <div className="col-lg-6">
@@ -374,8 +407,11 @@ const HomePage = () => {
                   style={{ letterSpacing: "1px", fontSize: "13px" }}
                 />
                 <div className="input-group-append">
-                  <button className="btn btn-light text-dark text-uppercase px-4"
-                    style={{ letterSpacing: "1px", fontSize: "13px" }} type="button">
+                  <button
+                    className="btn btn-light text-dark text-uppercase px-4"
+                    style={{ letterSpacing: "1px", fontSize: "13px" }}
+                    type="button"
+                  >
                     SUBSCRIBE
                   </button>
                 </div>

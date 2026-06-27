@@ -56,79 +56,83 @@ const ProductCard = ({ product }) => {
       style={{ color: "inherit" }}
     >
       <article className="product-gear-card card border h-100">
-      <div className="product-gear-img-wrapper position-relative">
-        <img
-          src={
-            product.imageUrl ||
-            "https://placehold.co/400x400/1a1a1a/666?text=GEAR"
-          }
-          className="card-img-top"
-          alt={product.name}
-        />
-        {isNew && (
-          <span
-            className="badge badge-dark position-absolute"
-            style={{
-              top: "12px",
-              left: "12px",
-              letterSpacing: "1px",
-              fontSize: "10px",
-            }}
-          >
-            NEW ARRIVAL
-          </span>
-        )}
-        {isBestSeller && !isNew && (
-          <span
-            className="badge badge-secondary position-absolute"
-            style={{
-              top: "12px",
-              left: "12px",
-              letterSpacing: "1px",
-              fontSize: "10px",
-            }}
-          >
-            BEST SELLER
-          </span>
-        )}
-      </div>
-      <div className="card-body d-flex flex-column pb-3">
-        {subtitle && (
-          <p
-            className="text-muted mb-1 text-uppercase"
-            style={{ fontSize: "10px", letterSpacing: "2px", fontWeight: 500 }}
-          >
-            {subtitle}
-          </p>
-        )}
-        <h3
-          className="font-weight-bold text-dark mb-2"
-          style={{ fontSize: "17px", lineHeight: 1.3 }}
-        >
-          {product.name}
-        </h3>
-        <div className="mt-auto d-flex justify-content-between align-items-center pt-2">
-          <span className="price-current" style={{ fontSize: "18px" }}>
-            {formatPrice(product.price)}
-          </span>
-          <button
-            className="btn btn-sm btn-outline-dark d-flex align-items-center justify-content-center"
-            style={{ width: "38px", height: "38px", padding: 0 }}
-            title="Thêm vào giỏ hàng"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              addToCart(product);
-            }}
-          >
-            <i
-              className="fa-solid fa-bag-shopping"
-              style={{ fontSize: "14px" }}
-            ></i>
-          </button>
+        <div className="product-gear-img-wrapper position-relative">
+          <img
+            src={
+              product.imageUrl ||
+              "https://placehold.co/400x400/1a1a1a/666?text=GEAR"
+            }
+            className="card-img-top"
+            alt={product.name}
+          />
+          {isNew && (
+            <span
+              className="badge badge-dark position-absolute"
+              style={{
+                top: "12px",
+                left: "12px",
+                letterSpacing: "1px",
+                fontSize: "10px",
+              }}
+            >
+              NEW ARRIVAL
+            </span>
+          )}
+          {isBestSeller && !isNew && (
+            <span
+              className="badge badge-secondary position-absolute"
+              style={{
+                top: "12px",
+                left: "12px",
+                letterSpacing: "1px",
+                fontSize: "10px",
+              }}
+            >
+              BEST SELLER
+            </span>
+          )}
         </div>
-      </div>
-    </article>
+        <div className="card-body d-flex flex-column pb-3">
+          {subtitle && (
+            <p
+              className="text-muted mb-1 text-uppercase"
+              style={{
+                fontSize: "10px",
+                letterSpacing: "2px",
+                fontWeight: 500,
+              }}
+            >
+              {subtitle}
+            </p>
+          )}
+          <h3
+            className="font-weight-bold text-dark mb-2"
+            style={{ fontSize: "17px", lineHeight: 1.3 }}
+          >
+            {product.name}
+          </h3>
+          <div className="mt-auto d-flex justify-content-between align-items-center pt-2">
+            <span className="price-current" style={{ fontSize: "18px" }}>
+              {formatPrice(product.price)}
+            </span>
+            <button
+              className="btn btn-sm btn-outline-dark d-flex align-items-center justify-content-center"
+              style={{ width: "38px", height: "38px", padding: 0 }}
+              title="Thêm vào giỏ hàng"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                addToCart(product);
+              }}
+            >
+              <i
+                className="fa-solid fa-bag-shopping"
+                style={{ fontSize: "14px" }}
+              ></i>
+            </button>
+          </div>
+        </div>
+      </article>
     </Link>
   );
 };

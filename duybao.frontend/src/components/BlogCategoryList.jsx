@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
 import blogService from "../services/blogService";
 
-const sampleBlogCategories = [
-  { id: 1, name: "Xu hướng thời trang" },
-  { id: 2, name: "Bí quyết phối đồ" },
-  { id: 3, name: "Sự kiện & Khuyến mãi" },
-  { id: 4, name: "Tư vấn làm đẹp" },
-];
-
 const BlogCategoryList = () => {
   const [blogCategories, setBlogCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,14 +10,9 @@ const BlogCategoryList = () => {
       try {
         setLoading(true);
         const data = await blogService.getBlogCategories();
-        if (data && data.length > 0) {
-          setBlogCategories(data);
-        } else {
-          setBlogCategories(sampleBlogCategories);
-        }
+        setBlogCategories(data || []);
       } catch (error) {
         console.error("Lỗi hệ thống khi gọi API chuyên mục tin tức:", error);
-        setBlogCategories(sampleBlogCategories);
       } finally {
         setLoading(false);
       }
@@ -40,9 +28,6 @@ const BlogCategoryList = () => {
       </div>
     );
   }
-
-  const displayCategories =
-    blogCategories.length > 0 ? blogCategories : sampleBlogCategories;
 
   return (
     <div className="card shadow-sm border-0 rounded-lg mt-4">
@@ -60,7 +45,7 @@ const BlogCategoryList = () => {
       </div>
       <div className="card-body p-0">
         <div className="list-group list-group-flush">
-          {displayCategories.map((cate) => (
+          {blogCategories.map((cate) => (
             <a
               key={cate.id}
               href="#"

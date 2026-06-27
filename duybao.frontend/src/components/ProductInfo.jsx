@@ -30,9 +30,7 @@ const ProductInfo = ({ product }) => {
   } = product;
 
   const discountedPrice =
-    discountPercentage > 0
-      ? price - price * (discountPercentage / 100)
-      : price;
+    discountPercentage > 0 ? price - price * (discountPercentage / 100) : price;
 
   const isInStock = stockQuantity > 0;
 
@@ -44,11 +42,20 @@ const ProductInfo = ({ product }) => {
 
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
-        stars.push(<i key={i} className="fa-solid fa-star text-warning mr-1"></i>);
+        stars.push(
+          <i key={i} className="fa-solid fa-star text-warning mr-1"></i>,
+        );
       } else if (i === fullStars && hasHalf) {
-        stars.push(<i key={i} className="fa-solid fa-star-half-stroke text-warning mr-1"></i>);
+        stars.push(
+          <i
+            key={i}
+            className="fa-solid fa-star-half-stroke text-warning mr-1"
+          ></i>,
+        );
       } else {
-        stars.push(<i key={i} className="fa-regular fa-star text-muted mr-1"></i>);
+        stars.push(
+          <i key={i} className="fa-regular fa-star text-muted mr-1"></i>,
+        );
       }
     }
     return stars;
@@ -60,10 +67,14 @@ const ProductInfo = ({ product }) => {
       <nav aria-label="breadcrumb" className="mb-3">
         <ol className="breadcrumb bg-transparent p-0 small text-muted">
           <li className="breadcrumb-item">
-            <a href="/" className="text-muted">Trang Chủ</a>
+            <a href="/" className="text-muted">
+              Trang Chủ
+            </a>
           </li>
           <li className="breadcrumb-item">
-            <a href="/products" className="text-muted">Cửa Hàng</a>
+            <a href="/products" className="text-muted">
+              Cửa Hàng
+            </a>
           </li>
           {categoryProduct && (
             <li className="breadcrumb-item text-muted">
@@ -74,28 +85,44 @@ const ProductInfo = ({ product }) => {
       </nav>
 
       {/* Tên + Thương hiệu */}
-      <h1 className="font-weight-bold text-uppercase text-dark mb-2"
-        style={{ letterSpacing: "-1px", fontSize: "2rem", lineHeight: 1.2 }}>
+      <h1
+        className="font-weight-bold text-uppercase text-dark mb-2"
+        style={{ letterSpacing: "-1px", fontSize: "2rem", lineHeight: 1.2 }}
+      >
         {name}
       </h1>
       {brand && (
-        <span className="badge badge-outline-dark mb-3 text-uppercase"
-          style={{ letterSpacing: "1px", fontSize: "11px" }}>
+        <span
+          className="badge badge-outline-dark mb-3 text-uppercase"
+          style={{ letterSpacing: "1px", fontSize: "11px" }}
+        >
           {brand}
         </span>
       )}
 
       {/* Giá */}
-      <div className="d-flex align-items-center flex-wrap mb-3" style={{ gap: "12px" }}>
-        <span className="text-dark font-weight-bold" style={{ fontSize: "1.8rem" }}>
+      <div
+        className="d-flex align-items-center flex-wrap mb-3"
+        style={{ gap: "12px" }}
+      >
+        <span
+          className="text-dark font-weight-bold"
+          style={{ fontSize: "1.8rem" }}
+        >
           {formatPrice(discountedPrice)}
         </span>
         {discountPercentage > 0 && (
           <>
-            <span className="text-muted" style={{ textDecoration: "line-through", fontSize: "1.1rem" }}>
+            <span
+              className="text-muted"
+              style={{ textDecoration: "line-through", fontSize: "1.1rem" }}
+            >
               {formatPrice(price)}
             </span>
-            <span className="badge badge-dark text-uppercase" style={{ letterSpacing: "1px", fontSize: "11px" }}>
+            <span
+              className="badge badge-dark text-uppercase"
+              style={{ letterSpacing: "1px", fontSize: "11px" }}
+            >
               -{discountPercentage}%
             </span>
           </>
@@ -103,16 +130,25 @@ const ProductInfo = ({ product }) => {
       </div>
 
       {/* Rating + SKU + Tồn kho */}
-      <div className="d-flex align-items-center flex-wrap mb-3" style={{ gap: "16px" }}>
+      <div
+        className="d-flex align-items-center flex-wrap mb-3"
+        style={{ gap: "16px" }}
+      >
         {rating > 0 && (
           <div className="d-flex align-items-center">
             {renderStars(rating)}
             <span className="ml-1 small text-muted">({rating})</span>
           </div>
         )}
-        {sku && <span className="badge badge-light border small text-uppercase">SKU: {sku}</span>}
-        <span className={`badge ${isInStock ? "badge-dark" : "badge-danger"} text-uppercase`}
-          style={{ letterSpacing: "1px", fontSize: "10px" }}>
+        {sku && (
+          <span className="badge badge-light border small text-uppercase">
+            SKU: {sku}
+          </span>
+        )}
+        <span
+          className={`badge ${isInStock ? "badge-dark" : "badge-danger"} text-uppercase`}
+          style={{ letterSpacing: "1px", fontSize: "10px" }}
+        >
           {isInStock ? `Còn hàng (${stockQuantity})` : "Hết hàng"}
         </span>
       </div>
@@ -122,38 +158,65 @@ const ProductInfo = ({ product }) => {
       {/* Mô tả ngắn */}
       {description && (
         <p className="text-muted mb-4" style={{ lineHeight: 1.8 }}>
-          {description.length > 250 ? description.substring(0, 250) + "..." : description}
+          {description.length > 250
+            ? description.substring(0, 250) + "..."
+            : description}
         </p>
       )}
 
       {/* Specs nhanh */}
       <div className="mb-4">
-        <h6 className="text-uppercase font-weight-bold text-dark mb-3"
-          style={{ fontSize: "12px", letterSpacing: "2px" }}>
+        <h6
+          className="text-uppercase font-weight-bold text-dark mb-3"
+          style={{ fontSize: "12px", letterSpacing: "2px" }}
+        >
           Thông Số Kỹ Thuật
         </h6>
-        <table className="table table-sm table-borderless text-muted" style={{ fontSize: "13px" }}>
+        <table
+          className="table table-sm table-borderless text-muted"
+          style={{ fontSize: "13px" }}
+        >
           <tbody>
             {brand && (
               <tr>
-                <td className="pl-0 text-uppercase" style={{ width: "130px", fontWeight: 600, color: "#555" }}>Thương hiệu</td>
+                <td
+                  className="pl-0 text-uppercase"
+                  style={{ width: "130px", fontWeight: 600, color: "#555" }}
+                >
+                  Thương hiệu
+                </td>
                 <td className="text-dark">{brand}</td>
               </tr>
             )}
             {sku && (
               <tr>
-                <td className="pl-0 text-uppercase" style={{ width: "130px", fontWeight: 600, color: "#555" }}>Mã SP</td>
+                <td
+                  className="pl-0 text-uppercase"
+                  style={{ width: "130px", fontWeight: 600, color: "#555" }}
+                >
+                  Mã SP
+                </td>
                 <td className="text-dark">{sku}</td>
               </tr>
             )}
             {categoryProduct && (
               <tr>
-                <td className="pl-0 text-uppercase" style={{ width: "130px", fontWeight: 600, color: "#555" }}>Danh mục</td>
+                <td
+                  className="pl-0 text-uppercase"
+                  style={{ width: "130px", fontWeight: 600, color: "#555" }}
+                >
+                  Danh mục
+                </td>
                 <td className="text-dark">{categoryProduct.name}</td>
               </tr>
             )}
             <tr>
-              <td className="pl-0 text-uppercase" style={{ width: "130px", fontWeight: 600, color: "#555" }}>Tình trạng</td>
+              <td
+                className="pl-0 text-uppercase"
+                style={{ width: "130px", fontWeight: 600, color: "#555" }}
+              >
+                Tình trạng
+              </td>
               <td className={isInStock ? "text-success" : "text-danger"}>
                 {isInStock ? "Còn hàng" : "Hết hàng"}
               </td>
@@ -166,7 +229,10 @@ const ProductInfo = ({ product }) => {
       <div className="d-flex flex-column" style={{ gap: "12px" }}>
         {/* Chọn số lượng */}
         <div className="d-flex align-items-center" style={{ gap: "12px" }}>
-          <span className="text-uppercase text-muted" style={{ fontSize: "12px", letterSpacing: "1px" }}>
+          <span
+            className="text-uppercase text-muted"
+            style={{ fontSize: "12px", letterSpacing: "1px" }}
+          >
             Số Lượng:
           </span>
           <div className="d-flex align-items-center border">
@@ -177,7 +243,14 @@ const ProductInfo = ({ product }) => {
             >
               −
             </button>
-            <span className="px-3" style={{ fontSize: "14px", minWidth: "36px", textAlign: "center" }}>
+            <span
+              className="px-3"
+              style={{
+                fontSize: "14px",
+                minWidth: "36px",
+                textAlign: "center",
+              }}
+            >
               {quantity}
             </span>
             <button
@@ -188,7 +261,10 @@ const ProductInfo = ({ product }) => {
             </button>
           </div>
           {!isInStock && (
-            <span className="text-danger small text-uppercase" style={{ fontSize: "11px" }}>
+            <span
+              className="text-danger small text-uppercase"
+              style={{ fontSize: "11px" }}
+            >
               Hết hàng
             </span>
           )}
@@ -214,7 +290,9 @@ const ProductInfo = ({ product }) => {
             setTimeout(() => setAdded(false), 1500);
           }}
         >
-          <i className={`fa-solid mr-2 ${added ? "fa-check" : "fa-cart-shopping"}`}></i>
+          <i
+            className={`fa-solid mr-2 ${added ? "fa-check" : "fa-cart-shopping"}`}
+          ></i>
           {added ? "Đã Thêm Vào Giỏ" : "Thêm Vào Giỏ"}
         </button>
       </div>

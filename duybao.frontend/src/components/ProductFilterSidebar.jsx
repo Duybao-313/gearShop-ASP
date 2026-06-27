@@ -10,11 +10,12 @@ const ProductFilterSidebar = ({
   priceRange,
   onPriceChange,
   onClearAll,
+  maxPrice = 50000000,
 }) => {
   const activeFilterCount =
     (selectedCategory ? 1 : 0) +
     selectedBrands.length +
-    (priceRange[1] < 5000000 ? 1 : 0);
+    (priceRange[1] < maxPrice ? 1 : 0);
 
   return (
     <aside className="pr-lg-4">
@@ -118,7 +119,7 @@ const ProductFilterSidebar = ({
             type="range"
             className="w-100"
             min="0"
-            max="5000000"
+            max={maxPrice}
             step="100000"
             value={priceRange[1]}
             onChange={(e) =>
@@ -142,8 +143,12 @@ const ProductFilterSidebar = ({
             className="text-muted"
             style={{ fontSize: "11px", letterSpacing: "1px" }}
           >
-            {priceRange[1] >= 5000000
-              ? "5.000.000₫+"
+            {priceRange[1] >= maxPrice
+              ? new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                  maximumFractionDigits: 0,
+                }).format(maxPrice) + "+"
               : new Intl.NumberFormat("vi-VN", {
                   style: "currency",
                   currency: "VND",

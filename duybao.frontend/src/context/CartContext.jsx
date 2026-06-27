@@ -210,15 +210,18 @@ export const CartProvider = ({ children }) => {
   );
 
   const clearCart = useCallback(async () => {
-    dispatch({ type: "CLEAR_CART" });
-
+    // Gọi API xóa giỏ hàng trên server TRƯỚC, rồi mới xóa state
     if (isAuthenticated) {
       try {
         await cartService.clearCart();
       } catch (err) {
         console.warn("Lỗi xóa giỏ hàng trên server:", err.message);
+        // Nếu API thất bại, KHÔNG xóa state để tránh mất dữ liệu
+        return;
       }
     }
+
+    dispatch({ type: "CLEAR_CART" });
   }, [isAuthenticated]);
 
   // ─── Computed ─────────────────────────────────────────────────

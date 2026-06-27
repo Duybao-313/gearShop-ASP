@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("duybao.data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6de5b0de62b366e479362dcbbf07dff36dd90f3c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8156388ccb49377603e962b16ffbc696eebd9ca5")]
 [assembly: System.Reflection.AssemblyProductAttribute("duybao.data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("duybao.data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

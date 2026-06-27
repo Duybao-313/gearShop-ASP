@@ -102,26 +102,31 @@ const PayPage = () => {
     setSubmitting(true);
 
     try {
+      // Tính tổng tiền đã bao gồm VAT 8%
+      const shipping = 0;
+      const taxRate = 0.08;
+      const tax = totalPrice * taxRate;
+      const grandTotal = totalPrice + shipping + tax;
+
       // Gửi đơn hàng lên Backend
-      // Lưu ý: Backend hiện nhận CustomerId (int) + Notes.
-      // Trong tương lai sẽ cần API tạo Customer trước, tạm thời gửi kèm
-      // thông tin khách hàng trong notes để admin xử lý.
+      // - items: danh sách sản phẩm (lưu vào bảng OrderDetails)
+      // - notes: thông tin khách hàng + ghi chú (để admin xử lý)
+      // - customerId: 0 nếu chưa login, backend sẽ tự lấy từ cookie nếu đã login
       const orderData = {
-        customerId: 0, // TODO: Sẽ thay bằng ID thật khi có API Customer
+        customerId: 0,
+        totalAmount: grandTotal,
         notes: JSON.stringify({
           customerName: formData.fullName,
           customerEmail: formData.email,
           customerPhone: formData.phone,
           customerAddress: formData.address,
-          cartItems: items.map((item) => ({
-            productId: item.id,
-            productName: item.name,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-          totalAmount: totalPrice,
           userNote: formData.notes || null,
         }),
+        items: items.map((item) => ({
+          productId: item.id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
       };
 
       const result = await orderService.createOrder(orderData);

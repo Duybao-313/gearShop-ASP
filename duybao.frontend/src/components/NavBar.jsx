@@ -1,7 +1,10 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
-const NavBar = () => {
+const NavBar = ({ onCartClick }) => {
+  const { totalItems } = useCart();
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top border-bottom">
       <div className="container">
@@ -61,19 +64,22 @@ const NavBar = () => {
             <Link to="#" className="text-dark mr-3" title="Đăng nhập">
               <i className="fa-regular fa-user"></i>
             </Link>
-            <Link
-              to="#"
-              className="text-dark position-relative"
+            <button
+              className="btn btn-link text-dark position-relative p-0 border-0"
               title="Giỏ hàng"
+              onClick={onCartClick}
+              style={{ textDecoration: "none", boxShadow: "none" }}
             >
               <i className="fa-solid fa-bag-shopping"></i>
-              <span
-                className="badge badge-dark badge-pill position-absolute"
-                style={{ top: "-8px", right: "-10px", fontSize: "10px" }}
-              >
-                0
-              </span>
-            </Link>
+              {totalItems > 0 && (
+                <span
+                  className="badge badge-dark badge-pill position-absolute"
+                  style={{ top: "-8px", right: "-10px", fontSize: "10px" }}
+                >
+                  {totalItems}
+                </span>
+              )}
+            </button>
           </div>
         </div>
       </div>

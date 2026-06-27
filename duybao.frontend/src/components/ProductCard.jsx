@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const ProductCard = ({ product }) => {
+  const { addToCart } = useCart();
   const formatPrice = (price) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -48,7 +50,12 @@ const ProductCard = ({ product }) => {
   const isBestSeller = product.id <= 10 && product.id % 3 === 0;
 
   return (
-    <article className="product-gear-card card border h-100">
+    <Link
+      to={`/products/${product.id}`}
+      className="text-decoration-none"
+      style={{ color: "inherit" }}
+    >
+      <article className="product-gear-card card border h-100">
       <div className="product-gear-img-wrapper position-relative">
         <img
           src={
@@ -108,6 +115,11 @@ const ProductCard = ({ product }) => {
             className="btn btn-sm btn-outline-dark d-flex align-items-center justify-content-center"
             style={{ width: "38px", height: "38px", padding: 0 }}
             title="Thêm vào giỏ hàng"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              addToCart(product);
+            }}
           >
             <i
               className="fa-solid fa-bag-shopping"
@@ -117,6 +129,7 @@ const ProductCard = ({ product }) => {
         </div>
       </div>
     </article>
+    </Link>
   );
 };
 

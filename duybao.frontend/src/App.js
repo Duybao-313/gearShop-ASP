@@ -1,36 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { CartProvider } from "./context/CartContext";
 import TopBar from "./components/TopBar";
 import NavBar from "./components/NavBar";
 import FooterSection from "./components/FooterSection";
+import CartDrawer from "./components/CartDrawer";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import BlogPage from "./pages/BlogPage";
+import BlogDetailPage from "./pages/BlogDetailPage";
 import "./App.css";
 
 function App() {
+  const [cartOpen, setCartOpen] = useState(false);
+
   return (
-    <Router>
-      <div className="App">
-        {/* TOP BAR: Hotline & Support */}
-        <TopBar />
+    <CartProvider>
+      <Router>
+        <div className="App">
+          {/* TOP BAR: Hotline & Support */}
+          <TopBar />
 
-        {/* NAVIGATION: Logo, Search, Menu */}
-        <NavBar />
+          {/* NAVIGATION: Logo, Search, Menu, Cart */}
+          <NavBar onCartClick={() => setCartOpen(true)} />
 
-        {/* ROUTES */}
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-        </Routes>
+          {/* ROUTES */}
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/products/:id" element={<ProductDetailPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogDetailPage />} />
+          </Routes>
 
-        {/* FOOTER */}
-        <FooterSection />
-      </div>
-    </Router>
+          {/* FOOTER */}
+          <FooterSection />
+
+          {/* CART DRAWER (Slide-in từ phải) */}
+          <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+        </div>
+      </Router>
+    </CartProvider>
   );
 }
 

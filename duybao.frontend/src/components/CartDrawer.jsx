@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 // ─── Format tiền VND ─────────────────────────────────────────────
@@ -61,7 +62,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
           <button
             className="btn btn-link text-dark p-0"
             onClick={onClose}
-            style={{ fontSize: "1.5rem", lineHeight: 1, textDecoration: "none" }}
+            style={{
+              fontSize: "1.5rem",
+              lineHeight: 1,
+              textDecoration: "none",
+            }}
             aria-label="Đóng giỏ hàng"
           >
             ✕
@@ -121,12 +126,14 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
             {/* Nút */}
             <div className="d-flex flex-column" style={{ gap: "0.5rem" }}>
-              <button
+              <Link
+                to="/cart"
                 className="btn btn-dark btn-block text-uppercase py-2"
                 style={{ letterSpacing: "2px", fontSize: "13px" }}
+                onClick={onClose}
               >
-                Thanh Toán
-              </button>
+                Xem Giỏ Hàng
+              </Link>
               <button
                 className="btn btn-outline-dark btn-block text-uppercase py-2"
                 style={{ letterSpacing: "2px", fontSize: "13px" }}
@@ -171,7 +178,9 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
         }}
       >
         <img
-          src={item.imageUrl || "https://placehold.co/400x400/1a1a1a/666?text=GEAR"}
+          src={
+            item.imageUrl || "https://placehold.co/400x400/1a1a1a/666?text=GEAR"
+          }
           alt={item.name}
           style={{ width: "100%", height: "100%", objectFit: "contain" }}
         />
@@ -211,7 +220,11 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
             </button>
             <span
               className="px-2"
-              style={{ fontSize: "13px", minWidth: "28px", textAlign: "center" }}
+              style={{
+                fontSize: "13px",
+                minWidth: "28px",
+                textAlign: "center",
+              }}
             >
               {item.quantity}
             </span>

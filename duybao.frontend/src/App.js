@@ -12,6 +12,7 @@ import BlogPage from "./pages/BlogPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
 import CartPage from "./pages/CartPage";
 import PayPage from "./pages/PayPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 import "./App.css";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
             <Route path="/blog/:id" element={<BlogDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/pay" element={<PayPage />} />
+            <Route path="/orders" element={<OrderHistoryPage />} />
           </Routes>
 
           {/* FOOTER */}

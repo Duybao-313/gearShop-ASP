@@ -44,7 +44,7 @@ const OrderHistoryPage = () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await orderService.getAllOrders();
+        const data = await orderService.getMyOrders();
         setOrders(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Lỗi khi tải danh sách đơn hàng:", err);

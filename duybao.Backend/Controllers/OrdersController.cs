@@ -31,6 +31,88 @@ namespace duybao.Backend.Controllers
         }
 
         /// <summary>
+        /// API: Lấy đơn hàng của người dùng hiện tại (yêu cầu đăng nhập)
+        /// GET: /api/Orders/my
+        /// </summary>
+        [HttpGet("my")]
+        [Authorize]
+        public async Task<IActionResult> GetMyOrders()
+        {
+            var userId = GetUserId();
+            if (userId == 0)
+                return Unauthorized(new { message = "Vui lòng đăng nhập để xem đơn hàng" });
+
+            var orders = await _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.OrderDetails!)
+                    .ThenInclude(od => od.Product)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .Select(o => new
+                {
+                    o.Id,
+                    o.OrderDate,
+                    o.Status,
+                    o.Notes,
+                    o.CustomerId,
+                    Customer = o.Customer != null ? new { o.Customer.Id, o.Customer.FullName, o.Customer.Email, o.Customer.Phone } : null,
+                    TotalItems = o.OrderDetails != null ? o.OrderDetails.Sum(d => d.Quantity) : 0,
+                    TotalAmount = o.OrderDetails != null ? o.OrderDetails.Sum(d => d.Quantity * d.UnitPrice) : 0,
+                    OrderDetails = o.OrderDetails != null ? o.OrderDetails.Select(od => new
+                    {
+                        od.Id,
+                        od.ProductId,
+                        od.Quantity,
+                        od.UnitPrice,
+                        Product = od.Product != null ? new { od.Product.Id, od.Product.Name, od.Product.ImageUrl, od.Product.Price } : null
+                    }) : null
+                })
+                .ToListAsync();
+
+            return Ok(orders);
+        }
+
+        /// <summary>
+        /// API: Lấy chi tiết đơn hàng của người dùng hiện tại (yêu cầu đăng nhập)
+        /// GET: /api/Orders/my/{id}
+        /// </summary>
+        [HttpGet("my/{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetMyDetail(int id)
+        {
+            var userId = GetUserId();
+            if (userId == 0)
+                return Unauthorized(new { message = "Vui lòng đăng nhập để xem chi tiết đơn hàng" });
+
+            var order = await _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.OrderDetails!)
+                    .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+
+            if (order == null)
+                return NotFound(new { message = "Không tìm thấy đơn hàng hoặc bạn không có quyền xem" });
+
+            return Ok(new
+            {
+                order.Id,
+                order.OrderDate,
+                order.Status,
+                order.Notes,
+                order.CustomerId,
+                Customer = order.Customer != null ? new { order.Customer.Id, order.Customer.FullName, order.Customer.Email, order.Customer.Phone, order.Customer.Address } : null,
+                OrderDetails = order.OrderDetails != null ? order.OrderDetails.Select(od => new
+                {
+                    od.Id,
+                    od.ProductId,
+                    od.Quantity,
+                    od.UnitPrice,
+                    Product = od.Product != null ? new { od.Product.Id, od.Product.Name, od.Product.ImageUrl, od.Product.Price, od.Product.Description, od.Product.Brand } : null
+                }) : null
+            });
+        }
+
+        /// <summary>
         /// API: Lấy toàn bộ đơn hàng (yêu cầu Admin)
         /// GET: /api/Orders
         /// </summary>
@@ -167,10 +249,12 @@ namespace duybao.Backend.Controllers
                 customerId = customer.Id;
 
                 // ── Tạo Order ────────────────────────────────────────────────
+                var userId = GetUserId(); // Lấy UserId nếu đã đăng nhập
                 var newOrder = new Order
                 {
                     OrderDate = DateTime.Now,
                     CustomerId = customerId,
+                    UserId = userId > 0 ? userId : null, // Gán UserId nếu đã login
                     Status = 0,
                     Notes = input.Notes
                 };

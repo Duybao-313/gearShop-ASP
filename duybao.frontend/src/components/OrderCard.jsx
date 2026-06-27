@@ -2,6 +2,16 @@ import React from "react";
 import { Link } from "react-router-dom";
 import OrderStatusBadge from "./OrderStatusBadge";
 
+// ─── Helper: tạo URL đầy đủ cho ảnh sản phẩm ──────────────────
+const API_BASE = "http://localhost:5228"; // Backend base URL (không có /api)
+const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return null;
+  // Nếu đã là URL tuyệt đối
+  if (imageUrl.startsWith("http")) return imageUrl;
+  // Nếu là đường dẫn tương đối từ backend
+  return `${API_BASE}/${imageUrl.replace(/^\/+/, "")}`;
+};
+
 // ─── Format tiền VND ─────────────────────────────────────────────
 const formatPrice = (price) =>
   new Intl.NumberFormat("vi-VN", {
@@ -48,9 +58,9 @@ const OrderCard = ({ order }) => {
 
   // Lấy sản phẩm đầu tiên trong đơn để hiển thị ảnh
   const firstDetail = order.orderDetails?.[0];
-  const productImage =
-    firstDetail?.product?.imageUrl ||
-    "https://placehold.co/400x400/1a1a1a/666?text=GEAR";
+  const rawImageUrl = firstDetail?.product?.imageUrl;
+  const productImage = getImageUrl(rawImageUrl);
+  const fallbackImage = "https://placehold.co/400x400/1a1a1a/666?text=GEAR";
 
   // Tính tổng tiền từ các dòng orderDetail
   const totalAmount =
@@ -77,28 +87,39 @@ const OrderCard = ({ order }) => {
       onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e2e2e2")}
     >
       <div className="row no-gutters align-items-center p-4">
-        {/* Ảnh sản phẩm */}
-        <div className="col-12 col-lg-2 mb-3 mb-lg-0">
+        {/* Ảnh sản phẩm đầu tiên */}
+        <div className="col-12 col-md-2 mb-3 mb-md-0 pr-md-3">
           <div
-            className="w-100"
             style={{
+              width: "100%",
+              maxWidth: "120px",
               aspectRatio: "1/1",
-              backgroundColor: "#eeeeee",
+              backgroundColor: "#f5f5f5",
               overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <img
-              src={productImage}
+              src={productImage || fallbackImage}
               alt={mainProductName}
-              className="w-100 h-100"
-              style={{ objectFit: "cover" }}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+              }}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = fallbackImage;
+              }}
               loading="lazy"
             />
           </div>
         </div>
 
         {/* Thông tin đơn hàng */}
-        <div className="col-12 col-lg-10">
+        <div className="col-12 col-md-10">
           {/* Header: Mã đơn + Tên SP + Trạng thái */}
           <div className="d-flex flex-wrap justify-content-between align-items-start mb-3">
             <div>

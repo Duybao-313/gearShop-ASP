@@ -23,12 +23,17 @@ namespace duybao.data.Entities
 
         public int CustomerId { get; set; }
 
-        public int Status { get; set; } // 0: Ch? duy?t, 1: ?ang giao, 2: ?� xong
+        public int? UserId { get; set; } // Liên kết tới User (nếu KH đã đăng nhập)
+
+        public int Status { get; set; } // 0: Chờ duyệt, 1: Đang giao, 2: Đã xong
 
         public string? Notes { get; set; }
 
         [ForeignKey("CustomerId")] 
         public virtual Customer? Customer { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual User? User { get; set; }
 
         public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
     }

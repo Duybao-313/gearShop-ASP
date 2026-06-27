@@ -16,6 +16,25 @@ const orderService = {
   },
 
   /**
+   * Lấy chi tiết đơn hàng của người dùng hiện tại
+   * GET /api/Orders/my/{id}
+   * @param {number} id - Mã đơn hàng
+   * @returns {Promise<Object>}
+   */
+  getMyOrderDetail(id) {
+    return axiosClient.get(`/Orders/my/${id}`);
+  },
+
+  /**
+   * Lấy danh sách đơn hàng của người dùng hiện tại
+   * GET /api/Orders/my
+   * @returns {Promise<Array>}
+   */
+  getMyOrders() {
+    return axiosClient.get("/Orders/my");
+  },
+
+  /**
    * Lấy danh sách đơn hàng (Admin)
    * GET /api/Orders
    * @returns {Promise<Array>}

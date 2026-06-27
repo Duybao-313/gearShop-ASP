@@ -10,6 +10,8 @@ import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import BlogPage from "./pages/BlogPage";
 import BlogDetailPage from "./pages/BlogDetailPage";
+import CartPage from "./pages/CartPage";
+import PayPage from "./pages/PayPage";
 import "./App.css";
 
 function App() {
@@ -32,6 +34,8 @@ function App() {
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:id" element={<BlogDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/pay" element={<PayPage />} />
           </Routes>
 
           {/* FOOTER */}

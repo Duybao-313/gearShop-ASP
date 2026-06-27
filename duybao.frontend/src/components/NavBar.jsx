@@ -97,7 +97,10 @@ const NavBar = ({ onCartClick }) => {
               <i className="fa-solid fa-search"></i>
             </Link>
             {isAuthenticated ? (
-              <div className="dropdown mr-3 user-dropdown-wrapper" ref={dropdownRef}>
+              <div
+                className="dropdown mr-3 user-dropdown-wrapper"
+                ref={dropdownRef}
+              >
                 <button
                   className="btn btn-link text-dark p-0 border-0 user-dropdown-toggle"
                   type="button"
@@ -105,24 +108,46 @@ const NavBar = ({ onCartClick }) => {
                   style={{ textDecoration: "none", boxShadow: "none" }}
                   title={user?.username || "Tài khoản"}
                 >
-                  <i className="fa-solid fa-circle-user mr-1" style={{ fontSize: "18px", verticalAlign: "middle" }}></i>
+                  <i
+                    className="fa-solid fa-circle-user mr-1"
+                    style={{ fontSize: "18px", verticalAlign: "middle" }}
+                  ></i>
                   <span className="small font-weight-bold text-uppercase d-none d-md-inline">
                     {user?.username}
                   </span>
-                  <i className={`fa-solid fa-chevron-down ml-1`} style={{ fontSize: "10px", transition: "transform 0.2s", transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)" }}></i>
+                  <i
+                    className={`fa-solid fa-chevron-down ml-1`}
+                    style={{
+                      fontSize: "10px",
+                      transition: "transform 0.2s",
+                      transform: dropdownOpen
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)",
+                    }}
+                  ></i>
                 </button>
                 {dropdownOpen && (
                   <div className="dropdown-menu dropdown-menu-right rounded-0 border-0 shadow-sm p-0 show user-dropdown-menu">
                     {/* Header */}
                     <div className="px-3 py-3 border-bottom bg-light">
                       <div className="d-flex align-items-center">
-                        <i className="fa-solid fa-circle-user mr-2" style={{ fontSize: "28px", color: "#1a1a1a" }}></i>
+                        <i
+                          className="fa-solid fa-circle-user mr-2"
+                          style={{ fontSize: "28px", color: "#1a1a1a" }}
+                        ></i>
                         <div>
-                          <p className="mb-0 font-weight-bold text-dark small text-uppercase" style={{ lineHeight: 1.2 }}>
+                          <p
+                            className="mb-0 font-weight-bold text-dark small text-uppercase"
+                            style={{ lineHeight: 1.2 }}
+                          >
                             {user?.username}
                           </p>
-                          <p className="mb-0 text-muted" style={{ fontSize: "11px", letterSpacing: "1px" }}>
-                            <i className="fa-solid fa-shield-halved mr-1"></i>USER
+                          <p
+                            className="mb-0 text-muted"
+                            style={{ fontSize: "11px", letterSpacing: "1px" }}
+                          >
+                            <i className="fa-solid fa-shield-halved mr-1"></i>
+                            USER
                           </p>
                         </div>
                       </div>
@@ -141,7 +166,10 @@ const NavBar = ({ onCartClick }) => {
                       to="/profile"
                       className="dropdown-item py-2 px-3 small text-uppercase font-weight-medium"
                       style={{ letterSpacing: "1px" }}
-                      onClick={(e) => { e.preventDefault(); setDropdownOpen(false); }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDropdownOpen(false);
+                      }}
                     >
                       <i className="fa-solid fa-user-gear mr-2"></i>
                       Thông Tin Tài Khoản

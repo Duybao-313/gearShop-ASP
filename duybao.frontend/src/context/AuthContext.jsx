@@ -20,17 +20,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        // Khôi phục user từ localStorage (chỉ để hiển thị tên, không dùng để authorize)
-        const cached = localStorage.getItem(AUTH_STORAGE_KEY);
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          setUser(parsed);
-        }
-
         const result = await authService.checkAuth();
         setIsAuthenticated(result.isAuthenticated);
 
-        if (!result.isAuthenticated) {
+        if (result.isAuthenticated) {
+          // Khôi phục user từ localStorage hoặc từ backend response
+          const cached = localStorage.getItem(AUTH_STORAGE_KEY);
+          if (cached) {
+            try {
+              setUser(JSON.parse(cached));
+            } catch {
+              setUser({ username: result.username || "User" });
+            }
+          } else if (result.username) {
+            const userData = { username: result.username };
+            setUser(userData);
+            localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
+          }
+        } else {
           setUser(null);
           localStorage.removeItem(AUTH_STORAGE_KEY);
         }

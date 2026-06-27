@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 /**
  * ProductInfo - Hiển thị thông tin chi tiết sản phẩm
@@ -7,6 +9,8 @@ import { useCart } from "../context/CartContext";
  */
 const ProductInfo = ({ product }) => {
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const formatPrice = (price) =>
@@ -285,6 +289,10 @@ const ProductInfo = ({ product }) => {
           disabled={!isInStock}
           onClick={() => {
             if (!isInStock) return;
+            if (!isAuthenticated) {
+              navigate("/login");
+              return;
+            }
             addToCart(product, quantity);
             setAdded(true);
             setTimeout(() => setAdded(false), 1500);

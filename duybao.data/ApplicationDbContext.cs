@@ -16,6 +16,7 @@ namespace duybao.data
         public DbSet<Product> Products { get; set; }        public DbSet<Review> Reviews { get; set; }        public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

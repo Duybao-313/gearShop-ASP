@@ -20,6 +20,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);      // Cookie sống 30 ngày
+        options.SlidingExpiration = true;                     // Gia hạn cookie khi còn hoạt động
+        options.Cookie.SameSite = SameSiteMode.None;          // Cho phép cross-origin (React :3000 → Backend :5228)
+        options.Cookie.SecurePolicy = CookieSecurePolicy.None; // HTTP localhost (production cần đổi thành Always)
     });
 
 // ---- CẤU HÌNH CORS (THÊM VÀO TRƯỚC builder.Build()) ----

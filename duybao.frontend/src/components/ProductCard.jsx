@@ -1,9 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const formatPrice = (price) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -122,6 +125,10 @@ const ProductCard = ({ product }) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                if (!isAuthenticated) {
+                  navigate("/login");
+                  return;
+                }
                 addToCart(product);
               }}
             >

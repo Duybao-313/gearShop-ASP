@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import OrderSidebar from "../components/OrderSidebar";
 import OrderCard from "../components/OrderCard";
 import Pagination from "../components/Pagination";
@@ -17,6 +19,9 @@ const FILTERS = {
 };
 
 const OrderHistoryPage = () => {
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
   // ─── State ────────────────────────────────────────────────────
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,8 +29,17 @@ const OrderHistoryPage = () => {
   const [activeFilter, setActiveFilter] = useState(FILTERS.ALL.value);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // ─── Fetch dữ liệu ────────────────────────────────────────────
+  // ─── Auth check: chưa đăng nhập → chuyển về login ──────────
   useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate("/login", { replace: true });
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
+  // ─── Fetch dữ liệu (chỉ khi đã xác thực) ─────────────────────
+  useEffect(() => {
+    if (authLoading || !isAuthenticated) return;
+
     const fetchOrders = async () => {
       try {
         setLoading(true);
@@ -41,7 +55,7 @@ const OrderHistoryPage = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [isAuthenticated, authLoading]);
 
   // ─── Lọc đơn hàng ─────────────────────────────────────────────
   const filteredOrders = useMemo(() => {
@@ -85,6 +99,27 @@ const OrderHistoryPage = () => {
 
   // ─── Tính tổng số đơn ─────────────────────────────────────────
   const totalOrders = orders.length;
+
+  // ─── Auth guard: loading / chưa đăng nhập ────────────────────
+  if (authLoading) {
+    return (
+      <main className="flex-grow-1">
+        <div className="container py-5 text-center">
+          <div
+            className="spinner-border"
+            role="status"
+            style={{ color: "#000" }}
+          >
+            <span className="sr-only">Đang tải...</span>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // ─── Render ────────────────────────────────────────────────────
   return (

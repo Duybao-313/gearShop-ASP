@@ -18,6 +18,21 @@ namespace duybao.Backend.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            // Nếu đã đăng nhập → trả về JSON (API) hoặc redirect (Browser)
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                if (Request.Headers["Accept"].ToString().Contains("application/json"))
+                {
+                    return Json(new { isAuthenticated = true, username = User.Identity.Name });
+                }
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Chưa đăng nhập → trả về JSON (API) hoặc View (Browser)
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Json(new { isAuthenticated = false });
+            }
             return View();
         }
 
@@ -39,9 +54,14 @@ namespace duybao.Backend.Controllers
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                // 3. Đăng nhập và lưu Cookie vào trình duyệt
+                // 3. Đăng nhập và lưu Cookie PERSISTENT vào trình duyệt (sống 30 ngày)
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,                       // Cookie sống qua các lần đóng trình duyệt
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30)
+                };
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
-                    new ClaimsPrincipal(claimsIdentity));
+                    new ClaimsPrincipal(claimsIdentity), authProperties);
 
                 // Nếu là API call (React), trả về JSON thay vì redirect
                 if (Request.Headers["Accept"].ToString().Contains("application/json"))
@@ -62,10 +82,17 @@ namespace duybao.Backend.Controllers
             return View();
         }
 
-        // H�m ??ng xu?t
+        // Hàm đăng xuất – xóa toàn bộ cookie/token
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Nếu là API call (React), trả về JSON thay vì redirect
+            if (Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                return Json(new { success = true, message = "Đã đăng xuất!" });
+            }
+
             return RedirectToAction("Login");
         }
         // ──────────────────────────────
@@ -120,8 +147,13 @@ namespace duybao.Backend.Controllers
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30)
+            };
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+                new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return Json(new { success = true, message = "Đăng ký thành công!" });
         }

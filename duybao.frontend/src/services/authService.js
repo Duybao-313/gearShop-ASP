@@ -23,7 +23,7 @@ const authService = {
       const response = await authAxios.post("/Account/Login", params, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          "Accept": "application/json",
+          Accept: "application/json",
         },
       });
 
@@ -31,10 +31,16 @@ const authService = {
       if (data && data.success) {
         return { success: true };
       }
-      return { success: false, error: data?.error || "Đăng nhập thất bại. Vui lòng thử lại." };
+      return {
+        success: false,
+        error: data?.error || "Đăng nhập thất bại. Vui lòng thử lại.",
+      };
     } catch (err) {
       console.error("Lỗi đăng nhập:", err.message);
-      return { success: false, error: "Không thể kết nối đến máy chủ. Vui lòng thử lại." };
+      return {
+        success: false,
+        error: "Không thể kết nối đến máy chủ. Vui lòng thử lại.",
+      };
     }
   },
 
@@ -42,12 +48,16 @@ const authService = {
   checkAuth: async () => {
     try {
       const response = await authAxios.get("/Account/Login", {
-        // Nếu đã login, GET /Account/Login sẽ redirect đến Category/Index
-        maxRedirects: 0,
-        validateStatus: (status) => status >= 200 && status <= 302,
+        headers: {
+          Accept: "application/json",
+        },
       });
-      // Nếu redirect → đã login
-      return { isAuthenticated: response.status === 302 };
+      // Backend trả về JSON { isAuthenticated, username? }
+      const data = response.data;
+      if (data && data.isAuthenticated) {
+        return { isAuthenticated: true, username: data.username };
+      }
+      return { isAuthenticated: false };
     } catch {
       return { isAuthenticated: false };
     }
@@ -75,7 +85,7 @@ const authService = {
         // Backend trả về JSON 200 (không redirect nữa)
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          "Accept": "application/json",
+          Accept: "application/json",
         },
       });
 
@@ -84,11 +94,17 @@ const authService = {
       if (data && data.success) {
         return { success: true };
       }
-      return { success: false, error: data?.error || "Đăng ký thất bại. Vui lòng thử lại." };
+      return {
+        success: false,
+        error: data?.error || "Đăng ký thất bại. Vui lòng thử lại.",
+      };
     } catch (err) {
       // Nếu lỗi mạng
       console.error("Lỗi đăng ký:", err.message);
-      return { success: false, error: "Không thể kết nối đến máy chủ. Vui lòng thử lại." };
+      return {
+        success: false,
+        error: "Không thể kết nối đến máy chủ. Vui lòng thử lại.",
+      };
     }
   },
 };

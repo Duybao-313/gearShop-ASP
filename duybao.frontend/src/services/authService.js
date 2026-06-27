@@ -15,35 +15,27 @@ const authAxios = axios.create({
 const authService = {
   // Đăng nhập – POST form-urlencoded đến MVC Account/Login
   login: async (username, password) => {
-    const params = new URLSearchParams();
-    params.append("username", username);
-    params.append("password", password);
+    try {
+      const params = new URLSearchParams();
+      params.append("username", username);
+      params.append("password", password);
 
-    // MVC Login trả về Redirect (302) nếu thành công,
-    // hoặc trả về View với ViewBag.Error nếu thất bại.
-    // axios sẽ follow redirect → nhận HTML của trang đích.
-    const response = await authAxios.post("/Account/Login", params, {
-      maxRedirects: 0, // Không follow redirect để bắt 302
-      validateStatus: (status) => status >= 200 && status <= 302,
-    });
+      const response = await authAxios.post("/Account/Login", params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/json",
+        },
+      });
 
-    if (response.status === 302) {
-      // Đăng nhập thành công → server redirect
-      return { success: true };
+      const data = response.data;
+      if (data && data.success) {
+        return { success: true };
+      }
+      return { success: false, error: data?.error || "Đăng nhập thất bại. Vui lòng thử lại." };
+    } catch (err) {
+      console.error("Lỗi đăng nhập:", err.message);
+      return { success: false, error: "Không thể kết nối đến máy chủ. Vui lòng thử lại." };
     }
-
-    // Thất bại → server trả về 200 + HTML có lỗi
-    const html = response.data;
-    const errorMatch =
-      typeof html === "string"
-        ? html.match(/Tên đăng nhập hoặc mật khẩu không đúng/)
-        : null;
-    return {
-      success: false,
-      error: errorMatch
-        ? "Tên đăng nhập hoặc mật khẩu không đúng!"
-        : "Đăng nhập thất bại. Vui lòng thử lại.",
-    };
   },
 
   // Kiểm tra trạng thái đăng nhập hiện tại
@@ -68,6 +60,36 @@ const authService = {
       validateStatus: (status) => status >= 200 && status <= 302,
     });
     return { success: true };
+  },
+
+  // Đăng ký – POST form-urlencoded đến MVC Account/Register
+  // Backend trả về JSON { success: true/false, error: "..." }
+  register: async (username, password, fullName) => {
+    try {
+      const params = new URLSearchParams();
+      params.append("username", username);
+      params.append("password", password);
+      params.append("fullName", fullName);
+
+      const response = await authAxios.post("/Account/Register", params, {
+        // Backend trả về JSON 200 (không redirect nữa)
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/json",
+        },
+      });
+
+      // Backend trả về JSON { success, error?, message? }
+      const data = response.data;
+      if (data && data.success) {
+        return { success: true };
+      }
+      return { success: false, error: data?.error || "Đăng ký thất bại. Vui lòng thử lại." };
+    } catch (err) {
+      // Nếu lỗi mạng
+      console.error("Lỗi đăng ký:", err.message);
+      return { success: false, error: "Không thể kết nối đến máy chủ. Vui lòng thử lại." };
+    }
   },
 };
 

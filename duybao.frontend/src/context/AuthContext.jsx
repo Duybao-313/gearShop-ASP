@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import authService from "../services/authService";
 
 const AuthContext = createContext();
@@ -52,6 +58,14 @@ export const AuthProvider = ({ children }) => {
     return { success: false, error: result.error };
   }, []);
 
+  // Cập nhật user sau khi đăng ký thành công (không cần gọi API login lại)
+  const setUserAfterRegister = useCallback((username) => {
+    const userData = { username };
+    setUser(userData);
+    setIsAuthenticated(true);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
+  }, []);
+
   const logout = useCallback(async () => {
     await authService.logout();
     setUser(null);
@@ -65,6 +79,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     logout,
+    setUserAfterRegister,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

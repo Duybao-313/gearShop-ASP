@@ -15,6 +15,7 @@ import CartPage from "./pages/CartPage";
 import PayPage from "./pages/PayPage";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import "./App.css";
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
               <Route path="/pay" element={<PayPage />} />
               <Route path="/orders" element={<OrderHistoryPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
             </Routes>
 
             {/* FOOTER */}

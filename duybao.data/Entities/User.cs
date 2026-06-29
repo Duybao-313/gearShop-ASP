@@ -18,7 +18,10 @@ namespace duybao.data.Entities
 		public string Username { get; set; }
 		public string PasswordHash { get; set; }
 		public string FullName { get; set; }
-		public string Role { get; set; } // Quản trị viên hoặc Biên tập viên
+		public string Role { get; set; } // Admin, Editor, User
+
+		// Navigation: 1-1 với Customer
+		public virtual Customer? Customer { get; set; }
 	}
 
 }

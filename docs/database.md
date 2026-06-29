@@ -96,6 +96,7 @@ erDiagram
     Category ||--o{ Post : "1:N"
     CategoryProduct ||--o{ Product : "1:N"
     Product ||--o{ Review : "1:N"
+    User ||--|| Customer : "1:1 (UserId FK)"
     Customer ||--o{ Order : "1:N"
     Order ||--o{ OrderDetail : "1:N"
     Product ||--o{ OrderDetail : "1:N"
@@ -156,18 +157,21 @@ erDiagram
 
     Customer {
         int Id PK
-        string Name
+        int UserId FK
+        string FullName
         string Email
         string Phone
         string Address
+        string Password
     }
 
     Order {
         int Id PK
         datetime OrderDate
-        decimal TotalAmount
-        string Status
+        int Status
+        string Notes
         int CustomerId FK
+        int UserId FK
     }
 
     OrderDetail {
@@ -343,14 +347,17 @@ public class Review
 }
 ```
 
-### 3.5 User — Người dùng hệ thống
+### 3.5 User — Người dùng hệ thống (Xác thực & Phân quyền)
+
+> **Mục đích:** Chỉ dùng để đăng nhập và phân quyền (Admin/Editor/User).  
+> **KHÔNG lưu** Email, Phone, Address ở đây — các thông tin đó thuộc về `Customer`.
 
 | #   | Cột            | Kiểu           | Ràng buộc          | Mô tả                 |
 | --- | -------------- | -------------- | ------------------ | --------------------- |
 | 1   | `Id`           | `INT`          | PK, AUTO_INCREMENT | Mã người dùng         |
 | 2   | `Username`     | `VARCHAR(100)` | NOT NULL, UNIQUE   | Tên đăng nhập         |
-| 3   | `PasswordHash` | `VARCHAR(500)` | NOT NULL           | Mật khẩu (nên hash)   |
-| 4   | `FullName`     | `VARCHAR(200)` | NOT NULL           | Họ tên đầy đủ         |
+| 3   | `PasswordHash` | `VARCHAR(500)` | NOT NULL           | Mật khẩu              |
+| 4   | `FullName`     | `VARCHAR(200)` | NOT NULL           | Họ tên hiển thị       |
 | 5   | `Role`         | `VARCHAR(50)`  | NOT NULL           | Admin / Editor / User |
 
 ```csharp
@@ -361,18 +368,52 @@ public class User
     public string PasswordHash { get; set; }
     public string FullName { get; set; }
     public string Role { get; set; } // Admin, Editor, User
+
+    // Navigation (1-1 với Customer)
+    public virtual Customer? Customer { get; set; }
 }
 ```
 
-### 3.6 Customer — Khách hàng
+### 3.6 Customer — Hồ sơ khách hàng (e-Commerce)
 
-| #   | Cột       | Kiểu           | Ràng buộc          | Mô tả             |
-| --- | --------- | -------------- | ------------------ | ----------------- |
-| 1   | `Id`      | `INT`          | PK, AUTO_INCREMENT | Mã khách hàng     |
-| 2   | `Name`    | `VARCHAR(200)` | NOT NULL           | Tên khách         |
-| 3   | `Email`   | `VARCHAR(200)` | NULL               | Email             |
-| 4   | `Phone`   | `VARCHAR(20)`  | NULL               | Số điện thoại     |
-| 5   | `Address` | `TEXT`         | NULL               | Địa chỉ giao hàng |
+> **Mục đích:** Lưu toàn bộ thông tin cá nhân của khách hàng để đặt hàng.  
+> **Quan hệ:** 1-1 với `User` qua `UserId`.
+
+| #   | Cột        | Kiểu           | Ràng buộc          | Mô tả                          |
+| --- | ---------- | -------------- | ------------------ | ------------------------------ |
+| 1   | `Id`       | `INT`          | PK, AUTO_INCREMENT | Mã khách hàng                  |
+| 2   | `UserId`   | `INT`          | FK → User.Id       | Liên kết tài khoản             |
+| 3   | `FullName` | `VARCHAR(200)` | NOT NULL           | Họ tên                         |
+| 4   | `Email`    | `VARCHAR(200)` | NOT NULL, UNIQUE   | Email (dùng để login)          |
+| 5   | `Phone`    | `VARCHAR(20)`  | NULL               | Số điện thoại                  |
+| 6   | `Address`  | `TEXT`         | NULL               | Địa chỉ giao hàng              |
+| 7   | `Password` | `VARCHAR(500)` | NOT NULL           | Mật khẩu (= User.PasswordHash) |
+
+````csharp
+public class Customer
+{
+    [Key]
+    public int Id { get; set; }
+
+    public int UserId { get; set; }
+
+    [ForeignKey("UserId")]
+    public virtual User? User { get; set; }
+
+    [Required]
+    public string FullName { get; set; }
+
+    [Required, EmailAddress]
+    public string Email { get; set; }
+
+    public string? Phone { get; set; }
+    public string? Address { get; set; }
+
+    [Required]
+    public string Password { get; set; }
+
+    public virtual ICollection<Order>? Orders { get; set; }
+}
 
 ### 3.7 Order — Đơn hàng
 
@@ -409,7 +450,7 @@ modelBuilder.Entity<CategoryProduct>().HasData(
     new CategoryProduct { Id = 3, Name = "🎧 Tai Nghe Gaming",    Description = "Tai nghe 7.1 surround, noise-cancelling" },
     new CategoryProduct { Id = 4, Name = "🪫 Lót Chuột LED",      Description = "Mousepad RGB kích thước lớn, chống trượt" }
 );
-```
+````
 
 ### 4.2 Danh Mục Bài Viết
 

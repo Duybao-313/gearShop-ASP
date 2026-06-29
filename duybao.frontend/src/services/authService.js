@@ -74,12 +74,13 @@ const authService = {
 
   // Đăng ký – POST form-urlencoded đến MVC Account/Register
   // Backend trả về JSON { success: true/false, error: "..." }
-  register: async (username, password, fullName) => {
+  register: async (username, password, fullName, email) => {
     try {
       const params = new URLSearchParams();
       params.append("username", username);
       params.append("password", password);
       params.append("fullName", fullName);
+      params.append("email", email || "");
 
       const response = await authAxios.post("/Account/Register", params, {
         // Backend trả về JSON 200 (không redirect nữa)

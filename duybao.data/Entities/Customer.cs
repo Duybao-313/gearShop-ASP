@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,11 +14,16 @@ namespace duybao.data.Entities
  -ngay tao: 14/5/2026
  -version: 1.0
  */
-	// Khách hàng
+	// Khï¿½ch hï¿½ng
 	public class Customer
     {
         [Key]
         public int Id { get; set; }
+
+        public int UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual User? User { get; set; }
 
         [Required]
         public string FullName { get; set; }
@@ -31,7 +37,7 @@ namespace duybao.data.Entities
         public string? Address { get; set; }
 
         [Required]
-        public string Password { get; set; } // L?u m?t kh?u thô theo yêu c?u t?i gi?n
+        public string Password { get; set; } // = User.PasswordHash
 
         public virtual ICollection<Order>? Orders { get; set; }
     }

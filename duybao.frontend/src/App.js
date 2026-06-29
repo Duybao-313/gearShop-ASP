@@ -17,6 +17,7 @@ import OrderHistoryPage from "./pages/OrderHistoryPage";
 import OrderDetailPage from "./pages/OrderDetail";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import InformationPage from "./pages/InformationPage";
 import "./App.css";
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
               <Route path="/orders/:id" element={<OrderDetailPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/account" element={<InformationPage />} />
             </Routes>
 
             {/* FOOTER */}

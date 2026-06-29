@@ -163,13 +163,10 @@ const NavBar = ({ onCartClick }) => {
                       Đơn Hàng Của Tôi
                     </Link>
                     <Link
-                      to="/profile"
+                      to="/account"
                       className="dropdown-item py-2 px-3 small text-uppercase font-weight-medium"
                       style={{ letterSpacing: "1px" }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setDropdownOpen(false);
-                      }}
+                      onClick={() => setDropdownOpen(false)}
                     >
                       <i className="fa-solid fa-user-gear mr-2"></i>
                       Thông Tin Tài Khoản

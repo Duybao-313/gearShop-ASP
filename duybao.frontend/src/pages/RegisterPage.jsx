@@ -12,6 +12,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,6 +25,9 @@ const RegisterPage = () => {
   const validate = () => {
     if (!username.trim() || !password.trim()) {
       return "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.";
+    }
+    if (!email.trim()) {
+      return "Vui lòng nhập địa chỉ email.";
     }
     if (password.length < 6) {
       return "Mật khẩu phải có ít nhất 6 ký tự.";
@@ -52,6 +56,7 @@ const RegisterPage = () => {
       username.trim(),
       password,
       fullName.trim() || username.trim(),
+      email.trim(),
     );
 
     if (result.success) {
@@ -100,6 +105,19 @@ const RegisterPage = () => {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             autoComplete="name"
+          />
+        </div>
+
+        {/* Email */}
+        <div className="login-field">
+          <label className="login-label">EMAIL</label>
+          <input
+            type="email"
+            className="login-input"
+            placeholder="user@geartech.vn"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
           />
         </div>
 

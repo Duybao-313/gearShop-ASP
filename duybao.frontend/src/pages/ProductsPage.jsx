@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import productService from "../services/productService";
 import categoryProductService from "../services/categoryProductService";
 import ProductFilterSidebar from "../components/ProductFilterSidebar";
@@ -9,6 +9,9 @@ import Pagination from "../components/Pagination";
 const ITEMS_PER_PAGE = 9;
 
 const ProductsPage = () => {
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+
   // Dữ liệu API
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -25,11 +28,16 @@ const ProductsPage = () => {
 
   // === FETCH DATA ===
   useEffect(() => {
-    const fetchAll = async () => {
+    const fetchProducts = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await productService.getAllProducts();
+        let data;
+        if (searchQuery) {
+          data = await productService.searchProducts(searchQuery);
+        } else {
+          data = await productService.getAllProducts();
+        }
         setProducts(data || []);
       } catch (err) {
         console.error("Lỗi khi tải sản phẩm:", err);
@@ -51,9 +59,9 @@ const ProductsPage = () => {
       }
     };
 
-    fetchAll();
+    fetchProducts();
     fetchCategories();
-  }, []);
+  }, [searchQuery]);
 
   // === GIÁ CAO NHẤT THỰC TẾ TỪ DỮ LIỆU ===
   const maxProductPrice = useMemo(() => {
@@ -178,13 +186,13 @@ const ProductsPage = () => {
                 className="badge badge-dark px-3 py-1 mb-2 text-uppercase"
                 style={{ letterSpacing: "2px", fontSize: "10px" }}
               >
-                PRECISION INSTRUMENTS
+                {searchQuery ? "KẾT QUẢ TÌM KIẾM" : "PRECISION INSTRUMENTS"}
               </span>
               <h1
                 className="font-weight-bold text-dark mb-0 text-uppercase"
                 style={{ fontSize: "42px", letterSpacing: "-1px" }}
               >
-                Gaming Gear
+                {searchQuery ? `"${searchQuery}"` : "Gaming Gear"}
               </h1>
             </div>
 

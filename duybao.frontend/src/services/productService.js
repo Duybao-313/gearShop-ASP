@@ -12,6 +12,12 @@ const productService = {
     const url = `/products/${id}`;
     return axiosClient.get(url);
   },
+
+  // Tìm kiếm sản phẩm theo từ khóa
+  searchProducts: (query) => {
+    const url = `/products/search?q=${encodeURIComponent(query)}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default productService;

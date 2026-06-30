@@ -36,13 +36,16 @@ namespace duybao.Backend.Controllers
         [HttpPost]
         public IActionResult Create(User model)
         {
-            // Ki?m tra t�n �?ng nh?p �? t?n t?i ch�a
+            // Kiểm tra tên đăng nhập đã tồn tại chưa
             var checkExist = _context.Users.Any(u => u.Username == model.Username);
             if (checkExist)
             {
-                ModelState.AddModelError("Username", "T�n �?ng nh?p n�y �? c� ngu?i d�ng!");
+                ModelState.AddModelError("Username", "Tên đăng nhập này đã có người dùng!");
                 return View(model);
             }
+
+            // Hash mật khẩu trước khi lưu
+            model.PasswordHash = PasswordHasher.Hash(model.PasswordHash);
 
             _context.Users.Add(model);
             _context.SaveChanges();
@@ -68,10 +71,10 @@ namespace duybao.Backend.Controllers
             var existingUser = _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == model.Id);
             if (existingUser == null) return NotFound();
 
-            // 2. Xử lý mật khẩu: Nếu nhập mới thì lấy cái mới, nếu trống thì lấy cái cũ
+            // 2. Xử lý mật khẩu: Nếu nhập mới thì hash và lưu, nếu trống thì giữ nguyên hash cũ
             if (!string.IsNullOrEmpty(NewPassword))
             {
-                model.PasswordHash = NewPassword; // Sau này sẽ mã hóa tại đây
+                model.PasswordHash = PasswordHasher.Hash(NewPassword);
             }
             else
             {

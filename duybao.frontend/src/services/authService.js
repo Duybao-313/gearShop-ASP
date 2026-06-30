@@ -108,6 +108,68 @@ const authService = {
       };
     }
   },
+
+  // ─── Quên mật khẩu — POST form-urlencoded đến MVC Account/ForgotPassword
+  forgotPassword: async (username) => {
+    try {
+      const params = new URLSearchParams();
+      params.append("username", username);
+
+      const response = await authAxios.post("/Account/ForgotPassword", params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+        },
+      });
+
+      const data = response.data;
+      if (data && data.success) {
+        return { success: true, resetLink: data.resetLink };
+      }
+      return {
+        success: false,
+        error: data?.error || "Không thể tạo yêu cầu. Vui lòng thử lại.",
+      };
+    } catch (err) {
+      console.error("Lỗi quên mật khẩu:", err.message);
+      return {
+        success: false,
+        error: "Không thể kết nối đến máy chủ. Vui lòng thử lại.",
+      };
+    }
+  },
+
+  // ─── Đặt lại mật khẩu — POST form-urlencoded đến MVC Account/ResetPassword
+  resetPassword: async (token, newPassword, confirmPassword) => {
+    try {
+      const params = new URLSearchParams();
+      params.append("token", token);
+      params.append("newPassword", newPassword);
+      params.append("confirmPassword", confirmPassword);
+
+      const response = await authAxios.post("/Account/ResetPassword", params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+        },
+      });
+
+      const data = response.data;
+      if (data && data.success) {
+        return { success: true };
+      }
+      return {
+        success: false,
+        error: data?.error || "Đặt lại mật khẩu thất bại. Vui lòng thử lại.",
+      };
+    } catch (err) {
+      console.error("Lỗi đặt lại mật khẩu:", err.message);
+      return {
+        success: false,
+        error: "Không thể kết nối đến máy chủ. Vui lòng thử lại.",
+      };
+    }
+  },
 };
 
 export default authService;

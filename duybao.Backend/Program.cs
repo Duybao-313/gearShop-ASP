@@ -22,7 +22,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromDays(30);      // Cookie sống 30 ngày
         options.SlidingExpiration = true;                     // Gia hạn cookie khi còn hoạt động
-        options.Cookie.SameSite = SameSiteMode.None;          // Cho phép cross-origin (React :3000 → Backend :5228)
+        options.Cookie.SameSite = SameSiteMode.Lax;            // Same-site: localhost:3000 và localhost:5228 là cùng site
         options.Cookie.SecurePolicy = CookieSecurePolicy.None; // HTTP localhost (production cần đổi thành Always)
     });
 
@@ -74,7 +74,7 @@ if (!app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ThaiCMS Web API v1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BaoCMS Web API v1");
     c.RoutePrefix = "swagger"; // -- Đường dẫn truy cập mặc định sẽ là /swagger
 });
 

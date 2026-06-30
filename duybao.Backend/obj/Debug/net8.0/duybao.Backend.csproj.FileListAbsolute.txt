@@ -147,3 +147,4 @@ D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\Swashbuckle.AspNetCor
 D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 D:\web.net\duybao_solution\duybao.Backend\obj\Debug\net8.0\duybao.Backend.MvcApplicationPartsAssemblyInfo.cs
+D:\web.net\duybao_solution\duybao.Backend\bin\Debug\net8.0\BCrypt-Net-Next.dll

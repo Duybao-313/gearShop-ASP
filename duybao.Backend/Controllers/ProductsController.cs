@@ -62,6 +62,47 @@ namespace duybao.Backend.Controllers
         }
 
         // ──────────────────────────────────────────────────────────────
+        //  API: Tìm kiếm sản phẩm theo từ khóa
+        //  GET:  /api/products/search?q=chuột
+        // ──────────────────────────────────────────────────────────────
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string q)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+            {
+                return Ok(new List<object>());
+            }
+
+            var keyword = q.Trim().ToLower();
+
+            var products = await _context.Products
+                .Include(p => p.CategoryProduct)
+                .Where(p => p.Name.ToLower().Contains(keyword)
+                         || p.Description.ToLower().Contains(keyword)
+                         || p.Brand.ToLower().Contains(keyword))
+                .OrderByDescending(p => p.Id)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.Price,
+                    p.DiscountPercentage,
+                    p.Rating,
+                    p.StockQuantity,
+                    p.ImageUrl,
+                    p.Images,
+                    p.Brand,
+                    p.Sku,
+                    p.CategoryProductId,
+                    CategoryProduct = p.CategoryProduct != null ? new { p.CategoryProduct.Id, p.CategoryProduct.Name } : null
+                })
+                .ToListAsync();
+
+            return Ok(products);
+        }
+
+        // ──────────────────────────────────────────────────────────────
         //  API: Lấy sản phẩm theo danh mục sản phẩm
         //  GET:  /api/products/categoryproduct/{categoryProductId}
         // ──────────────────────────────────────────────────────────────

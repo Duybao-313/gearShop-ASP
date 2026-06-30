@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import SearchBar from "./SearchBar";
 
 const NavBar = ({ onCartClick }) => {
   const { totalItems } = useCart();
@@ -93,9 +94,7 @@ const NavBar = ({ onCartClick }) => {
 
           {/* Search & User Actions */}
           <div className="d-flex align-items-center">
-            <Link to="#" className="text-dark mr-3" title="Tìm kiếm">
-              <i className="fa-solid fa-search"></i>
-            </Link>
+            <SearchBar />
             {isAuthenticated ? (
               <div
                 className="dropdown mr-3 user-dropdown-wrapper"

@@ -39,11 +39,22 @@ namespace duybao.Backend.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            // 1. Kiểm tra tài khoản trong Database
-            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
+            // 1. Tìm tài khoản trong Database theo username
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
-            if (user != null)
+            if (user != null && PasswordHasher.Verify(password, user.PasswordHash, out string? upgradedHash))
             {
+                // Nếu hash cũ (plain text) đã được upgrade, cập nhật lại vào DB
+                if (upgradedHash != null)
+                {
+                    user.PasswordHash = upgradedHash;
+                    // Đồng bộ sang Customer nếu có
+                    var cust = _context.Customers.FirstOrDefault(c => c.UserId == user.Id);
+                    if (cust != null)
+                        cust.Password = upgradedHash;
+                    await _context.SaveChangesAsync();
+                }
+
                 // 2. Thiết lập danh tính (Claims)
                 var claims = new List<Claim>
                 {
@@ -137,29 +148,32 @@ namespace duybao.Backend.Controllers
                 return Json(new { success = false, error = "Email này đã được sử dụng. Vui lòng chọn email khác." });
             }
 
-            // 3. Tạo user mới (mặc định role = User)
+            // 3. Hash mật khẩu trước khi lưu
+            var hashedPassword = PasswordHasher.Hash(password);
+
+            // 4. Tạo user mới (mặc định role = User)
             var newUser = new duybao.data.Entities.User
             {
                 Username = username.Trim(),
-                PasswordHash = password, // Trong production nên hash password (BCrypt)
+                PasswordHash = hashedPassword,
                 FullName = string.IsNullOrWhiteSpace(fullName) ? username.Trim() : fullName.Trim(),
                 Role = "User"
             };
 
-            // 3.5 Tạo Customer liên kết qua navigation (EF tự gán UserId)
+            // 4.5 Tạo Customer liên kết qua navigation (EF tự gán UserId)
             var customer = new duybao.data.Entities.Customer
             {
                 User = newUser, // Navigation property
                 FullName = newUser.FullName,
                 Email = emailStr,
-                Password = password
+                Password = hashedPassword
             };
 
             _context.Users.Add(newUser);
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync(); // 1 lần save atomic cho cả 2
 
-            // 4. Tự động đăng nhập sau khi đăng ký
+            // 5. Tự động đăng nhập sau khi đăng ký
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, newUser.Username),
@@ -187,12 +201,17 @@ namespace duybao.Backend.Controllers
             var exists = _context.Customers.Any(c => c.UserId == user.Id);
             if (!exists)
             {
+                // Nếu PasswordHash chưa phải BCrypt, hash lại trước khi lưu vào Customer
+                var customerPassword = PasswordHasher.IsBcryptHash(user.PasswordHash)
+                    ? user.PasswordHash
+                    : PasswordHasher.Hash(user.PasswordHash);
+
                 _context.Customers.Add(new duybao.data.Entities.Customer
                 {
                     UserId = user.Id,
                     FullName = user.FullName,
                     Email = user.Username, // tạm dùng username làm email
-                    Password = user.PasswordHash
+                    Password = customerPassword
                 });
                 _context.SaveChanges();
             }
@@ -253,12 +272,17 @@ namespace duybao.Backend.Controllers
             var customer = _context.Customers.FirstOrDefault(c => c.UserId == user.Id);
             if (customer == null)
             {
+                // Nếu PasswordHash chưa phải BCrypt, hash lại trước khi lưu vào Customer
+                var customerPassword = PasswordHasher.IsBcryptHash(user.PasswordHash)
+                    ? user.PasswordHash
+                    : PasswordHasher.Hash(user.PasswordHash);
+
                 customer = new duybao.data.Entities.Customer
                 {
                     UserId = user.Id,
                     FullName = user.FullName,
                     Email = !string.IsNullOrWhiteSpace(model.Email) ? model.Email.Trim() : user.Username,
-                    Password = user.PasswordHash
+                    Password = customerPassword
                 };
                 _context.Customers.Add(customer);
             }
@@ -301,6 +325,150 @@ namespace duybao.Backend.Controllers
                     address = customer.Address ?? ""
                 }
             });
+        }
+
+        // ──────────────────────────────
+        // FORGOT PASSWORD — Quên mật khẩu
+        // ──────────────────────────────
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string username)
+        {
+            // Nếu là API call (React), trả về JSON
+            var isApi = Request.Headers["Accept"].ToString().Contains("application/json");
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                if (isApi) return Json(new { success = false, error = "Vui lòng nhập tên đăng nhập." });
+                ViewBag.Error = "Vui lòng nhập tên đăng nhập.";
+                return View();
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Username == username.Trim());
+            if (user == null)
+            {
+                // Không tiết lộ user có tồn tại hay không (bảo mật)
+                if (isApi) return Json(new { success = true, message = "Nếu tài khoản tồn tại, link đặt lại mật khẩu đã được tạo." });
+                ViewBag.Message = "Nếu tài khoản tồn tại, link đặt lại mật khẩu đã được tạo.";
+                return View();
+            }
+
+            // Tạo token reset (GUID) + thời hạn 15 phút
+            var token = Guid.NewGuid().ToString("N");
+            user.ResetPasswordToken = token;
+            user.ResetPasswordTokenExpiry = DateTime.UtcNow.AddMinutes(15);
+            await _context.SaveChangesAsync();
+
+            // Tạo link reset
+            var resetLink = Url.Action("ResetPassword", "Account", new { token }, Request.Scheme);
+
+            if (isApi)
+            {
+                return Json(new { success = true, message = "Link đặt lại mật khẩu đã được tạo.", resetLink });
+            }
+
+            ViewBag.ResetLink = resetLink;
+            ViewBag.Message = "Link đặt lại mật khẩu đã được tạo (có hiệu lực trong 15 phút):";
+            return View();
+        }
+
+        // ──────────────────────────────
+        // RESET PASSWORD — Đặt lại mật khẩu
+        // ──────────────────────────────
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                ViewBag.Error = "Token không hợp lệ hoặc đã hết hạn.";
+                return View();
+            }
+
+            var user = _context.Users.FirstOrDefault(u =>
+                u.ResetPasswordToken == token &&
+                u.ResetPasswordTokenExpiry > DateTime.UtcNow);
+
+            if (user == null)
+            {
+                ViewBag.Error = "Token không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu lại.";
+                return View();
+            }
+
+            // Token hợp lệ → hiển thị form đặt lại mật khẩu
+            ViewBag.Token = token;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string token, string newPassword, string confirmPassword)
+        {
+            var isApi = Request.Headers["Accept"].ToString().Contains("application/json");
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                if (isApi) return Json(new { success = false, error = "Token không hợp lệ." });
+                ViewBag.Error = "Token không hợp lệ.";
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6)
+            {
+                if (isApi) return Json(new { success = false, error = "Mật khẩu mới phải có ít nhất 6 ký tự." });
+                ViewBag.Error = "Mật khẩu mới phải có ít nhất 6 ký tự.";
+                ViewBag.Token = token;
+                return View();
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                if (isApi) return Json(new { success = false, error = "Mật khẩu xác nhận không khớp." });
+                ViewBag.Error = "Mật khẩu xác nhận không khớp.";
+                ViewBag.Token = token;
+                return View();
+            }
+
+            var user = _context.Users.FirstOrDefault(u =>
+                u.ResetPasswordToken == token &&
+                u.ResetPasswordTokenExpiry > DateTime.UtcNow);
+
+            if (user == null)
+            {
+                if (isApi) return Json(new { success = false, error = "Token không hợp lệ hoặc đã hết hạn." });
+                ViewBag.Error = "Token không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu lại.";
+                return View();
+            }
+
+            // Cập nhật mật khẩu mới
+            user.PasswordHash = PasswordHasher.Hash(newPassword);
+
+            // Xóa token sau khi dùng (bảo mật: mỗi token chỉ dùng 1 lần)
+            user.ResetPasswordToken = null;
+            user.ResetPasswordTokenExpiry = null;
+
+            // Đồng bộ mật khẩu sang Customer nếu có
+            var customer = _context.Customers.FirstOrDefault(c => c.UserId == user.Id);
+            if (customer != null)
+            {
+                customer.Password = user.PasswordHash;
+            }
+
+            await _context.SaveChangesAsync();
+
+            if (isApi)
+            {
+                return Json(new { success = true, message = "Đặt lại mật khẩu thành công! Vui lòng đăng nhập." });
+            }
+
+            ViewBag.Success = true;
+            ViewBag.Message = "Đặt lại mật khẩu thành công!";
+            return View();
         }
     }
 

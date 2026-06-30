@@ -20,6 +20,10 @@ namespace duybao.data.Entities
 		public string FullName { get; set; }
 		public string Role { get; set; } // Admin, Editor, User
 
+		// Quên mật khẩu: token reset + thời hạn
+		public string? ResetPasswordToken { get; set; }
+		public DateTime? ResetPasswordTokenExpiry { get; set; }
+
 		// Navigation: 1-1 với Customer
 		public virtual Customer? Customer { get; set; }
 	}

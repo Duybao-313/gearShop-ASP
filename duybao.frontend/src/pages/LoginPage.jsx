@@ -79,11 +79,7 @@ const LoginPage = () => {
         <div className="login-field">
           <div className="d-flex justify-content-between align-items-center">
             <label className="login-label">MẬT KHẨU</label>
-            <Link
-              to="/forgot-password"
-              className="login-forgot-link"
-              onClick={(e) => e.preventDefault()}
-            >
+            <Link to="/forgot-password" className="login-forgot-link">
               Quên?
             </Link>
           </div>

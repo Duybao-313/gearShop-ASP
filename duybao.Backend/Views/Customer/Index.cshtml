@@ -1,0 +1,83 @@
+@model IEnumerable<duybao.data.Entities.Customer>
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý khách hàng";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-dark"><i class="bi bi-people-fill"></i> QUẢN LÝ KHÁCH HÀNG</h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Thêm khách hàng mới
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-4">
+            <i class="bi bi-info-circle fs-3"></i>
+            <p class="mt-2 mb-0">Chưa có khách hàng nào. Hãy thêm khách hàng đầu tiên!</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover shadow-sm border align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Họ và Tên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                        <th>Tài khoản</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td><span class="badge bg-secondary">#@c.Id</span></td>
+                            <td><strong>@c.FullName</strong></td>
+                            <td>@c.Email</td>
+                            <td>@(string.IsNullOrEmpty(c.Phone) ? Html.Raw("<span class='text-muted'>Chưa có</span>") : c.Phone)</td>
+                            <td>@(string.IsNullOrEmpty(c.Address) ? Html.Raw("<span class='text-muted'>Chưa có</span>") : c.Address)</td>
+                            <td>
+                                @if (c.User != null)
+                                {
+                                    <span class="badge bg-info text-dark">@c.User.Username</span>
+                                    <small class="text-muted d-block">@c.User.Role</small>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Chưa liên kết</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Edit" asp-route-id="@c.Id"
+                                       class="btn btn-outline-warning" title="Sửa">
+                                        <i class="bi bi-pencil"></i> Sửa
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@c.Id" method="post"
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa khách hàng @c.FullName?')"
+                                          style="display:inline;">
+                                        <button type="submit" class="btn btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i> Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-muted small mt-2">
+            <i class="bi bi-info-circle"></i> Tổng cộng: <strong>@Model.Count()</strong> khách hàng
+        </div>
+    }
+</div>

@@ -1,0 +1,70 @@
+@model duybao.data.Entities.Customer
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Thêm khách hàng mới";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-person-plus-fill"></i> THÊM KHÁCH HÀNG MỚI</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Họ và Tên <span class="text-danger">*</span></label>
+                        <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" required />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="khachhang@email.com" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Số điện thoại</label>
+                        <input asp-for="Phone" class="form-control" placeholder="0912 345 678" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Liên kết tài khoản</label>
+                        <select asp-for="UserId" class="form-select">
+                            <option value="0">-- Tạo tài khoản mới tự động --</option>
+                            @if (ViewBag.Users != null)
+                            {
+                                foreach (var user in ViewBag.Users)
+                                {
+                                    <option value="@user.Id">@user.Username (@user.Role)</option>
+                                }
+                            }
+                        </select>
+                        <small class="text-muted">Chọn tài khoản có sẵn hoặc để trống để tạo mới.</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Địa chỉ</label>
+                    <textarea asp-for="Address" class="form-control" rows="2" placeholder="123 Đường ABC, Quận XYZ, TP.HCM"></textarea>
+                </div>
+
+                <div class="alert alert-info small py-2">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Lưu ý:</strong> Nếu chọn "Tạo tài khoản mới tự động", hệ thống sẽ tạo User với mật khẩu mặc định <code>123456</code>.
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Lưu khách hàng
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

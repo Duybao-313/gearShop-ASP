@@ -1,0 +1,186 @@
+@model IEnumerable<OrderListVM>
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý đơn hàng";
+}
+
+<div class="container-fluid mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-dark"><i class="bi bi-cart-check-fill"></i> QUẢN LÝ ĐƠN HÀNG</h2>
+        <span class="badge bg-primary fs-6">Tổng: @ViewBag.TotalOrders đơn</span>
+    </div>
+
+    @* ─── Thông báo ─── *@
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @* ─── Bộ lọc & Tìm kiếm ─── *@
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">Tìm kiếm</label>
+                    <input type="text" name="search" class="form-control" placeholder="Tên KH, Email, SĐT hoặc Mã đơn..."
+                           value="@ViewBag.Search" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small">Trạng thái</label>
+                    <select name="status" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        <option value="0" selected="@(ViewBag.StatusFilter == 0 ? "selected" : null)">⏳ Chờ duyệt</option>
+                        <option value="1" selected="@(ViewBag.StatusFilter == 1 ? "selected" : null)">🚚 Đang giao</option>
+                        <option value="2" selected="@(ViewBag.StatusFilter == 2 ? "selected" : null)">✅ Đã xong</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100">
+                        <i class="bi bi-funnel"></i> Lọc
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* ─── Bảng danh sách đơn hàng ─── *@
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+            <p class="mb-0 fs-5">Chưa có đơn hàng nào.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover shadow-sm border align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã ĐH</th>
+                        <th>Khách hàng</th>
+                        <th>Email / SĐT</th>
+                        <th>Ngày đặt</th>
+                        <th class="text-center">SL</th>
+                        <th class="text-end">Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span class="badge bg-secondary fs-6">#@order.Id</span>
+                            </td>
+                            <td>
+                                <strong>@order.CustomerName</strong>
+                            </td>
+                            <td>
+                                <div>@order.CustomerEmail</div>
+                                @if (!string.IsNullOrEmpty(order.CustomerPhone))
+                                {
+                                    <small class="text-muted">@order.CustomerPhone</small>
+                                }
+                            </td>
+                            <td>
+                                <small>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</small>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-info">@order.TotalItems</span>
+                            </td>
+                            <td class="text-end">
+                                <strong class="text-danger">@order.TotalAmount.ToString("N0") ₫</strong>
+                            </td>
+                            <td>
+                                @switch (order.Status)
+                                {
+                                    case 0:
+                                        <span class="badge bg-warning text-dark">⏳ Chờ duyệt</span>
+                                        break;
+                                    case 1:
+                                        <span class="badge bg-primary">🚚 Đang giao</span>
+                                        break;
+                                    case 2:
+                                        <span class="badge bg-success">✅ Đã xong</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Detail" asp-route-id="@order.Id"
+                                       class="btn btn-outline-primary" title="Xem chi tiết">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@order.Id" method="post"
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa đơn hàng #@order.Id?')"
+                                          style="display:inline;">
+                                        <button type="submit" class="btn btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @* ─── Phân trang ─── *@
+        @if ((int)ViewBag.TotalPages > 1)
+        {
+            <nav>
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-page="@i"
+                               asp-route-search="@ViewBag.Search"
+                               asp-route-status="@ViewBag.StatusFilter">
+                                @i
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+
+        <div class="text-muted small mt-2">
+            <i class="bi bi-info-circle"></i> Hiển thị <strong>@Model.Count()</strong> / <strong>@ViewBag.TotalOrders</strong> đơn hàng
+        </div>
+    }
+</div>
+
+@* ─── Scripts ─── *@
+@section Scripts {
+    <script>
+        // Tự động ẩn alert sau 5 giây
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert-dismissible');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+}

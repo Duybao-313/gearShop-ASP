@@ -56,7 +56,7 @@ namespace duybao.Backend.Controllers
             }
 
             // Nếu không chọn User, tạo User mới tự động
-            if (model.UserId == 0)
+            if (model.UserId == null || model.UserId == 0)
             {
                 var newUser = new User
                 {
@@ -71,7 +71,7 @@ namespace duybao.Backend.Controllers
             }
 
             // Đồng bộ Password với User nếu có liên kết
-            var linkedUser = await _context.Users.FindAsync(model.UserId);
+            var linkedUser = model.UserId.HasValue ? await _context.Users.FindAsync(model.UserId.Value) : null;
             if (linkedUser != null)
             {
                 model.Password = linkedUser.PasswordHash;
@@ -128,9 +128,9 @@ namespace duybao.Backend.Controllers
                 model.Password = PasswordHasher.Hash(NewPassword);
 
                 // Đồng bộ mật khẩu sang User nếu có liên kết
-                if (model.UserId > 0)
+                if (model.UserId.HasValue && model.UserId > 0)
                 {
-                    var linkedUser = await _context.Users.FindAsync(model.UserId);
+                    var linkedUser = await _context.Users.FindAsync(model.UserId.Value);
                     if (linkedUser != null)
                     {
                         linkedUser.PasswordHash = model.Password;
@@ -144,9 +144,9 @@ namespace duybao.Backend.Controllers
             }
 
             // Đồng bộ FullName sang User nếu có liên kết
-            if (model.UserId > 0)
+            if (model.UserId.HasValue && model.UserId > 0)
             {
-                var linkedUser = await _context.Users.FindAsync(model.UserId);
+                var linkedUser = await _context.Users.FindAsync(model.UserId.Value);
                 if (linkedUser != null && linkedUser.FullName != model.FullName)
                 {
                     linkedUser.FullName = model.FullName;

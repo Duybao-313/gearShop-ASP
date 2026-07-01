@@ -6,8 +6,18 @@ import React from "react";
  *   - formData: { fullName, email, phone, address, notes }
  *   - onChange: (field, value) => void
  *   - errors: { [field]: message }
+ *   - readOnlyFields: string[] — các field bị khóa (vd: ["fullName", "email"])
+ *   - loading: boolean — đang tải thông tin tài khoản
  */
-const CheckoutForm = ({ formData, onChange, errors = {} }) => {
+const CheckoutForm = ({
+  formData,
+  onChange,
+  errors = {},
+  readOnlyFields = [],
+  loading = false,
+}) => {
+  const isReadOnly = (field) => readOnlyFields.includes(field);
+
   const handleChange = (field) => (e) => {
     onChange(field, e.target.value);
   };
@@ -24,6 +34,28 @@ const CheckoutForm = ({ formData, onChange, errors = {} }) => {
         <i className="fa-solid fa-user mr-2"></i>Thông Tin Giao Hàng
       </h5>
 
+      {/* Thông báo khi đang load profile */}
+      {loading && (
+        <div
+          className="alert alert-info small py-2 mb-3"
+          style={{ fontSize: "13px" }}
+        >
+          <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+          Đang tải thông tin tài khoản...
+        </div>
+      )}
+
+      {/* Thông báo khi email & họ tên bị khóa */}
+      {readOnlyFields.length > 0 && !loading && (
+        <div
+          className="alert alert-light border small py-2 mb-3"
+          style={{ fontSize: "13px" }}
+        >
+          <i className="fa-solid fa-lock mr-2" style={{ color: "#6c757d" }}></i>
+          Email và họ tên được lấy từ tài khoản của bạn.
+        </div>
+      )}
+
       <div className="row">
         {/* Họ Tên */}
         <div className="col-12 mb-3">
@@ -32,6 +64,12 @@ const CheckoutForm = ({ formData, onChange, errors = {} }) => {
             style={{ fontSize: "11px", letterSpacing: "1px" }}
           >
             Họ Và Tên <span style={{ color: "#dc3545" }}>*</span>
+            {isReadOnly("fullName") && (
+              <i
+                className="fa-solid fa-lock ml-2"
+                style={{ fontSize: "10px", color: "#6c757d" }}
+              ></i>
+            )}
           </label>
           <input
             type="text"
@@ -39,7 +77,14 @@ const CheckoutForm = ({ formData, onChange, errors = {} }) => {
             placeholder="Nguyễn Văn A"
             value={formData.fullName}
             onChange={handleChange("fullName")}
-            style={{ fontSize: "14px" }}
+            readOnly={isReadOnly("fullName")}
+            disabled={loading}
+            style={{
+              fontSize: "14px",
+              ...(isReadOnly("fullName")
+                ? { backgroundColor: "#f8f9fa", cursor: "not-allowed" }
+                : {}),
+            }}
           />
           {errors.fullName && (
             <div className="invalid-feedback" style={{ fontSize: "11px" }}>
@@ -55,6 +100,12 @@ const CheckoutForm = ({ formData, onChange, errors = {} }) => {
             style={{ fontSize: "11px", letterSpacing: "1px" }}
           >
             Email <span style={{ color: "#dc3545" }}>*</span>
+            {isReadOnly("email") && (
+              <i
+                className="fa-solid fa-lock ml-2"
+                style={{ fontSize: "10px", color: "#6c757d" }}
+              ></i>
+            )}
           </label>
           <input
             type="email"
@@ -62,7 +113,14 @@ const CheckoutForm = ({ formData, onChange, errors = {} }) => {
             placeholder="email@example.com"
             value={formData.email}
             onChange={handleChange("email")}
-            style={{ fontSize: "14px" }}
+            readOnly={isReadOnly("email")}
+            disabled={loading}
+            style={{
+              fontSize: "14px",
+              ...(isReadOnly("email")
+                ? { backgroundColor: "#f8f9fa", cursor: "not-allowed" }
+                : {}),
+            }}
           />
           {errors.email && (
             <div className="invalid-feedback" style={{ fontSize: "11px" }}>

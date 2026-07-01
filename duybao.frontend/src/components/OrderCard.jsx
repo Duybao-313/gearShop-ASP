@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import OrderStatusBadge from "./OrderStatusBadge";
+import orderService from "../services/orderService";
 
 // ─── Helper: tạo URL đầy đủ cho ảnh sản phẩm ──────────────────
 const API_BASE = "http://localhost:5228"; // Backend base URL (không có /api)
@@ -35,7 +36,7 @@ const getStatusConfig = (status) => {
   const configs = {
     0: {
       dateLabel: null,
-      primaryAction: { label: "HỦY ĐƠN", to: null, variant: "danger" },
+      primaryAction: { label: "HỦY ĐƠN", action: "cancel", variant: "danger" },
       secondaryAction: { label: "XEM CHI TIẾT", to: null, variant: "primary" },
     },
     1: {
@@ -48,13 +49,40 @@ const getStatusConfig = (status) => {
       primaryAction: { label: "MUA LẠI", to: null, variant: "outline" },
       secondaryAction: { label: "XEM CHI TIẾT", to: null, variant: "primary" },
     },
+    3: {
+      dateLabel: null,
+      primaryAction: null,
+      secondaryAction: { label: "XEM CHI TIẾT", to: null, variant: "primary" },
+    },
   };
   return configs[status] || configs[0];
 };
 
 // ─── OrderCard Component ──────────────────────────────────────────
-const OrderCard = ({ order }) => {
+const OrderCard = ({ order, onCancel }) => {
   const statusConfig = getStatusConfig(order.status);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState(null);
+
+  // Xử lý hủy đơn hàng
+  const handleCancel = async () => {
+    if (!window.confirm(`Bạn có chắc muốn hủy đơn hàng #${String(order.id).padStart(5, "0")}?`))
+      return;
+
+    setCancelling(true);
+    setCancelError(null);
+    try {
+      const result = await orderService.cancelOrder(order.id);
+      alert(result.message || "Đã hủy đơn hàng thành công!");
+      if (onCancel) onCancel(order.id);
+      else window.location.reload();
+    } catch (err) {
+      const msg = err.response?.data?.message || "Không thể hủy đơn hàng. Vui lòng thử lại.";
+      setCancelError(msg);
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   // Lấy sản phẩm đầu tiên trong đơn để hiển thị ảnh
   const firstDetail = order.orderDetails?.[0];
@@ -211,23 +239,40 @@ const OrderCard = ({ order }) => {
                 </Link>
               )}
               {/* Nút chính */}
-              {statusConfig.primaryAction &&
-              statusConfig.primaryAction.variant === "danger" ? (
-                <button
-                  className="btn text-uppercase"
-                  style={{
-                    fontSize: "12px",
-                    letterSpacing: "2px",
-                    fontWeight: "600",
-                    borderRadius: "0",
-                    padding: "10px 24px",
-                    color: "#ba1a1a",
-                    border: "1px solid rgba(186,26,26,0.5)",
-                    backgroundColor: "transparent",
-                  }}
-                >
-                  {statusConfig.primaryAction.label}
-                </button>
+              {statusConfig.primaryAction ? (
+                statusConfig.primaryAction.action === "cancel" ? (
+                <div>
+                  <button
+                    type="button"
+                    className="btn text-uppercase"
+                    disabled={cancelling}
+                    onClick={handleCancel}
+                    style={{
+                      fontSize: "12px",
+                      letterSpacing: "2px",
+                      fontWeight: "600",
+                      borderRadius: "0",
+                      padding: "10px 24px",
+                      color: "#ba1a1a",
+                      border: "1px solid rgba(186,26,26,0.5)",
+                      backgroundColor: "transparent",
+                      cursor: cancelling ? "wait" : "pointer",
+                    }}
+                  >
+                    {cancelling ? (
+                      <>
+                        <i className="fa-solid fa-spinner fa-spin mr-2"></i>ĐANG HỦY...
+                      </>
+                    ) : (
+                      statusConfig.primaryAction.label
+                    )}
+                  </button>
+                  {cancelError && (
+                    <small className="d-block text-danger mt-1" style={{ fontSize: "11px" }}>
+                      {cancelError}
+                    </small>
+                  )}
+                </div>
               ) : statusConfig.primaryAction.variant === "primary" ? (
                 <Link
                   to={`/orders/${order.id}`}
@@ -261,7 +306,8 @@ const OrderCard = ({ order }) => {
                 >
                   {statusConfig.primaryAction.label}
                 </button>
-              )}
+              )
+              ) : null}
             </div>
           </div>
         </div>

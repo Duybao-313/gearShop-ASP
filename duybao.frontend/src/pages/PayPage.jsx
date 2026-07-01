@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import authService from "../services/authService";
 import orderService from "../services/orderService";
 import OrderReview from "../components/OrderReview";
 import CheckoutForm from "../components/CheckoutForm";
@@ -33,6 +35,7 @@ const INITIAL_FORM = {
 const PayPage = () => {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   // ─── State ────────────────────────────────────────────────────
   const [formData, setFormData] = useState(INITIAL_FORM);
@@ -40,6 +43,35 @@ const PayPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [orderSuccess, setOrderSuccess] = useState(null); // { orderId, message }
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  // ─── Tự động lấy thông tin Customer khi đã login ──────────────
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const fetchProfile = async () => {
+      setProfileLoading(true);
+      try {
+        const result = await authService.getProfile();
+        if (result.success && result.data) {
+          // Ghi đè email & fullName từ tài khoản (lock)
+          setFormData((prev) => ({
+            ...prev,
+            fullName: result.data.fullName || prev.fullName,
+            email: result.data.email || prev.email,
+            phone: result.data.phone || prev.phone,
+            address: result.data.address || prev.address,
+          }));
+        }
+      } catch {
+        // Nếu lỗi vẫn cho phép nhập tay
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [isAuthenticated]);
 
   // ─── Handlers ─────────────────────────────────────────────────
   const handleFieldChange = (field, value) => {
@@ -320,6 +352,8 @@ const PayPage = () => {
                 formData={formData}
                 onChange={handleFieldChange}
                 errors={errors}
+                readOnlyFields={isAuthenticated ? ["fullName", "email"] : []}
+                loading={profileLoading}
               />
             </div>
 

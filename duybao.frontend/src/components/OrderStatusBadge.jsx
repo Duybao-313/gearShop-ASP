@@ -33,6 +33,14 @@ const OrderStatusBadge = ({ status, dateLabel }) => {
       dotColor: "#74777f",
       icon: "fa-solid fa-circle-check",
     },
+    3: {
+      label: "ĐÃ HỦY",
+      bgColor: "rgba(220,53,69,0.08)",
+      textColor: "#ba1a1a",
+      borderColor: "rgba(220,53,69,0.3)",
+      dotColor: "#ba1a1a",
+      icon: "fa-solid fa-circle-xmark",
+    },
   };
 
   const config = statusConfig[status] || statusConfig[0];

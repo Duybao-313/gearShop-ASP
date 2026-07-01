@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import TopBar from "./components/TopBar";
@@ -59,6 +60,19 @@ function App() {
 
             {/* CART DRAWER (Slide-in từ phải) */}
             <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+
+            {/* TOAST NOTIFICATIONS */}
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                duration: 2500,
+                style: {
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  letterSpacing: "0.5px",
+                },
+              }}
+            />
           </div>
         </Router>
       </CartProvider>

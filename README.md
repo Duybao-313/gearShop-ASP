@@ -89,9 +89,9 @@ Mở trình duyệt: **http://localhost:3000**
 
 | Vai trò | Username | Password     |
 | ------- | -------- | ------------ |
-| Admin   | `admin`  | `Admin@123`  |
-| Editor  | `editor` | `Editor@123` |
-| User    | `user`   | `User@123`   |
+| Admin   | `admin`  | `123456`  |
+| Editor  | `editor` | `123456` |
+| User    | `user`   | `123456`   |
 
 ---
 

@@ -10,20 +10,7 @@ const ForgotPasswordPage = () => {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [resetToken, setResetToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
-  // Trích xuất token từ URL reset của backend
-  const extractToken = (backendUrl) => {
-    try {
-      const url = new URL(backendUrl);
-      return url.searchParams.get("token") || "";
-    } catch {
-      // Fallback: parse thủ công nếu URL không chuẩn
-      const match = backendUrl.match(/[?&]token=([^&\s]+)/);
-      return match ? match[1] : "";
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,9 +28,8 @@ const ForgotPasswordPage = () => {
 
     if (result.success) {
       setMessage(
-        "Link đặt lại mật khẩu đã được tạo (có hiệu lực trong 15 phút):",
+        "Link đặt lại mật khẩu đã được gửi qua email (có hiệu lực trong 15 phút).",
       );
-      setResetToken(extractToken(result.resetLink || ""));
     } else {
       setError(result.error || "Có lỗi xảy ra. Vui lòng thử lại.");
     }
@@ -84,19 +70,8 @@ const ForgotPasswordPage = () => {
             <i className="fa-solid fa-circle-check mr-2" />
             {message}
           </div>
-          {resetToken && (
-            <div className="login-submit-wrapper mt-3">
-              <Link
-                to={`/reset-password?token=${resetToken}`}
-                className="login-submit-btn d-block text-center text-decoration-none"
-              >
-                ĐẶT LẠI MẬT KHẨU NGAY
-                <i className="fa-solid fa-arrow-right ml-2" />
-              </Link>
-            </div>
-          )}
-          <p className="text-muted small mt-3" style={{ fontSize: "0.75rem" }}>
-            <em>Trong môi trường thực tế, link này sẽ được gửi qua email.</em>
+          <p className="text-muted small mt-3" style={{ fontSize: "0.8rem" }}>
+            Vui lòng kiểm tra email của bạn và làm theo hướng dẫn để đặt lại mật khẩu.
           </p>
         </div>
       ) : (

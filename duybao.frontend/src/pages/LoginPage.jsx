@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import AuthCard from "../components/AuthCard";
 
@@ -29,6 +30,7 @@ const LoginPage = () => {
     const result = await login(email.trim(), password);
 
     if (result.success) {
+      toast.success("🎉 Đăng nhập thành công!");
       navigate("/");
     } else {
       setError(result.error || "Đăng nhập thất bại. Vui lòng thử lại.");

@@ -16,6 +16,7 @@ const FILTERS = {
   PENDING: { label: "Đang Xử Lý", value: "PENDING" },
   SHIPPING: { label: "Đang Giao", value: "SHIPPING" },
   DELIVERED: { label: "Đã Giao", value: "DELIVERED" },
+  CANCELLED: { label: "Đã Hủy", value: "CANCELLED" },
 };
 
 const OrderHistoryPage = () => {
@@ -77,6 +78,9 @@ const OrderHistoryPage = () => {
         break;
       case FILTERS.DELIVERED.value:
         result = result.filter((o) => o.status === 2);
+        break;
+      case FILTERS.CANCELLED.value:
+        result = result.filter((o) => o.status === 3);
         break;
       default:
         break;
@@ -326,7 +330,17 @@ const OrderHistoryPage = () => {
               <>
                 <div>
                   {paginatedOrders.map((order) => (
-                    <OrderCard key={order.id} order={order} />
+                    <OrderCard
+                      key={order.id}
+                      order={order}
+                      onCancel={(orderId) => {
+                        setOrders((prev) =>
+                          prev.map((o) =>
+                            o.id === orderId ? { ...o, status: 3 } : o,
+                          ),
+                        );
+                      }}
+                    />
                   ))}
                 </div>
 

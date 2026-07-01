@@ -38,6 +38,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Đăng ký Email Service (Brevo API) - gửi email xác nhận đơn hàng
+builder.Services.AddHttpClient<duybao.Backend.Services.IEmailService, duybao.Backend.Services.EmailService>();
+
 // Đăng ký DbContext vào hệ thống với MySQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

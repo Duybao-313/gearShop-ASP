@@ -43,6 +43,7 @@
                         <option value="0" selected="@(ViewBag.StatusFilter == 0 ? "selected" : null)">⏳ Chờ duyệt</option>
                         <option value="1" selected="@(ViewBag.StatusFilter == 1 ? "selected" : null)">🚚 Đang giao</option>
                         <option value="2" selected="@(ViewBag.StatusFilter == 2 ? "selected" : null)">✅ Đã xong</option>
+                        <option value="3" selected="@(ViewBag.StatusFilter == 3 ? "selected" : null)">❌ Đã hủy</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -120,6 +121,9 @@
                                         break;
                                     case 2:
                                         <span class="badge bg-success">✅ Đã xong</span>
+                                        break;
+                                    case 3:
+                                        <span class="badge bg-danger">❌ Đã hủy</span>
                                         break;
                                 }
                             </td>

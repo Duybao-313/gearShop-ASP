@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import productService from "../services/productService";
 import CartItem from "../components/CartItem";
 import CartSummary from "../components/CartSummary";
@@ -15,8 +16,17 @@ const formatPrice = (price) =>
 // ─── CartPage Component ──────────────────────────────────────────
 const CartPage = () => {
   const { items, totalItems } = useCart();
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [recommended, setRecommended] = useState([]);
   const [loadingRecs, setLoadingRecs] = useState(true);
+
+  // Chặn truy cập nếu chưa đăng nhập
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate("/login", { replace: true });
+    }
+  }, [isAuthenticated, authLoading, navigate]);
 
   // Lấy sản phẩm gợi ý
   useEffect(() => {
@@ -37,6 +47,8 @@ const CartPage = () => {
   }, []);
 
   // ─── Empty Cart ──────────────────────────────────────────────
+  if (authLoading || !isAuthenticated) return null;
+
   if (items.length === 0) {
     return (
       <main className="flex-grow-1">

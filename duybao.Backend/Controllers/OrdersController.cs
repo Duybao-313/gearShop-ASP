@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using duybao.data;
 using duybao.data.Entities;
+using duybao.Backend.Services;
 
 namespace duybao.Backend.Controllers
 {
@@ -13,10 +14,14 @@ namespace duybao.Backend.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context, IEmailService emailService, IServiceScopeFactory scopeFactory)
         {
             _context = context;
+            _emailService = emailService;
+            _scopeFactory = scopeFactory;
         }
 
         /// <summary>
@@ -200,6 +205,7 @@ namespace duybao.Backend.Controllers
                 // ── Xác định hoặc tạo Customer ──────────────────────────────
                 var customerId = 0;
                 Customer? customer = null;
+                var userId = GetUserId(); // Lấy UserId nếu đã đăng nhập
 
                 // Parse thông tin khách hàng từ notes JSON
                 string? customerName = null, customerEmail = null, customerPhone = null, customerAddress = null;
@@ -217,8 +223,25 @@ namespace duybao.Backend.Controllers
                     catch { /* notes không phải JSON hợp lệ, bỏ qua */ }
                 }
 
+                // Nếu đã đăng nhập → lock email & họ tên theo tài khoản Customer
+                if (userId > 0)
+                {
+                    customer = await _context.Customers
+                        .FirstOrDefaultAsync(c => c.UserId == userId);
+
+                    if (customer != null)
+                    {
+                        // Ghi đè email & họ tên từ tài khoản (lock theo customer)
+                        customerEmail = customer.Email;
+                        customerName = customer.FullName;
+                        // Vẫn cho phép cập nhật SĐT & địa chỉ từ form
+                        if (!string.IsNullOrEmpty(customerPhone)) customer.Phone = customerPhone;
+                        if (!string.IsNullOrEmpty(customerAddress)) customer.Address = customerAddress;
+                    }
+                }
+
                 // Tìm Customer theo email (nếu có)
-                if (!string.IsNullOrEmpty(customerEmail))
+                if (customer == null && !string.IsNullOrEmpty(customerEmail))
                 {
                     customer = await _context.Customers
                         .FirstOrDefaultAsync(c => c.Email == customerEmail);
@@ -233,23 +256,25 @@ namespace duybao.Backend.Controllers
                         Email = customerEmail ?? $"guest_{DateTime.Now.Ticks}@temp.com",
                         Phone = customerPhone,
                         Address = customerAddress,
-                        Password = "guest" // mật khẩu mặc định cho khách lẻ
+                        Password = "guest", // mật khẩu mặc định cho khách lẻ
+                        UserId = userId > 0 ? userId : null // Gắn UserId nếu đã login
                     };
                     _context.Customers.Add(customer);
                     await _context.SaveChangesAsync();
                 }
                 else
                 {
-                    // Cập nhật thông tin nếu có thay đổi
-                    if (!string.IsNullOrEmpty(customerName)) customer.FullName = customerName;
+                    // Cập nhật thông tin nếu có thay đổi (chỉ SĐT & địa chỉ)
                     if (!string.IsNullOrEmpty(customerPhone)) customer.Phone = customerPhone;
                     if (!string.IsNullOrEmpty(customerAddress)) customer.Address = customerAddress;
+                    // Nếu chưa login → cho phép cập nhật tên (khách lẻ)
+                    if (userId <= 0 && !string.IsNullOrEmpty(customerName))
+                        customer.FullName = customerName;
                 }
 
                 customerId = customer.Id;
 
                 // ── Tạo Order ────────────────────────────────────────────────
-                var userId = GetUserId(); // Lấy UserId nếu đã đăng nhập
                 var newOrder = new Order
                 {
                     OrderDate = DateTime.Now,
@@ -291,6 +316,47 @@ namespace duybao.Backend.Controllers
 
                 await _context.SaveChangesAsync();
 
+                // ── Gửi email xác nhận đơn hàng (fire-and-forget, scope riêng) ──
+                var orderId = newOrder.Id;
+                var custEmail = customer.Email;
+                var custFullName = customer.FullName;
+                var totalAmount = input.TotalAmount;
+                var itemDtos = input.Items.Select(i => new { i.ProductId, i.Quantity, i.Price }).ToList();
+
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        using var scope = _scopeFactory.CreateScope();
+                        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                        var emailSvc = scope.ServiceProvider.GetRequiredService<IEmailService>();
+
+                        // Lấy tên sản phẩm từ DB để đưa vào email
+                        var productIds = itemDtos.Select(i => i.ProductId).ToList();
+                        var products = await db.Products
+                            .Where(p => productIds.Contains(p.Id))
+                            .ToDictionaryAsync(p => p.Id, p => p.Name);
+
+                        var emailItems = itemDtos
+                            .Select(i => (
+                                ProductName: products.TryGetValue(i.ProductId, out var name) ? name : $"Sản phẩm #{i.ProductId}",
+                                Quantity: i.Quantity,
+                                UnitPrice: i.Price
+                            ))
+                            .ToList();
+
+                        // Dựng lại object Customer tối thiểu để truyền vào email service
+                        var cust = new Customer { FullName = custFullName, Email = custEmail };
+                        var ord = new Order { Id = orderId, OrderDate = DateTime.Now };
+
+                        await emailSvc.SendOrderConfirmationAsync(cust, ord, emailItems, totalAmount);
+                    }
+                    catch (Exception emailEx)
+                    {
+                        Console.WriteLine($"[Email Error] Không gửi được email cho đơn hàng #{orderId}: {emailEx.Message}");
+                    }
+                });
+
                 return StatusCode(201, new { 
                     message = "Đặt hàng thành công!", 
                     orderId = newOrder.Id 
@@ -315,13 +381,70 @@ namespace duybao.Backend.Controllers
             if (order == null)
                 return NotFound(new { message = "Không tìm thấy đơn hàng" });
 
-            if (input.Status < 0 || input.Status > 2)
-                return BadRequest(new { message = "Trạng thái không hợp lệ. 0: Chờ duyệt, 1: Đang giao, 2: Đã xong" });
+            if (input.Status < 0 || input.Status > 3)
+                return BadRequest(new { message = "Trạng thái không hợp lệ. 0: Chờ duyệt, 1: Đang giao, 2: Đã xong, 3: Đã hủy" });
 
             order.Status = input.Status;
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Cập nhật trạng thái thành công", orderId = order.Id, status = order.Status });
+        }
+
+        /// <summary>
+        /// API: Hủy đơn hàng (chỉ khi trạng thái = 0: Chờ duyệt)
+        /// PUT: /api/Orders/{id}/cancel
+        /// </summary>
+        [HttpPut("{id}/cancel")]
+        [Authorize]
+        public async Task<IActionResult> CancelOrder(int id)
+        {
+            var userId = GetUserId();
+            if (userId == 0)
+                return Unauthorized(new { message = "Vui lòng đăng nhập để hủy đơn hàng" });
+
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails!)
+                    .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+                return NotFound(new { message = "Không tìm thấy đơn hàng" });
+
+            // Chỉ chủ đơn (hoặc Admin) mới được hủy
+            bool isAdmin = User.IsInRole("Admin");
+            if (order.UserId != userId && !isAdmin)
+                return Forbid();
+
+            // Chỉ hủy được khi đơn đang ở trạng thái "Chờ duyệt" (0)
+            if (order.Status != 0)
+            {
+                var statusText = order.Status switch
+                {
+                    1 => "Đang giao",
+                    2 => "Đã xong",
+                    3 => "Đã hủy",
+                    _ => "không xác định"
+                };
+                return BadRequest(new { message = $"Không thể hủy đơn hàng đang ở trạng thái \"{statusText}\". Chỉ hủy được đơn hàng đang chờ duyệt." });
+            }
+
+            // ── Hoàn lại tồn kho ──
+            if (order.OrderDetails != null)
+            {
+                foreach (var detail in order.OrderDetails)
+                {
+                    if (detail.Product != null)
+                    {
+                        detail.Product.StockQuantity += detail.Quantity;
+                    }
+                }
+            }
+
+            // Cập nhật trạng thái thành "Đã hủy" (3)
+            order.Status = 3;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Đã hủy đơn hàng thành công!", orderId = order.Id, status = order.Status });
         }
     }
 

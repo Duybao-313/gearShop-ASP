@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import SearchBar from "./SearchBar";
@@ -26,6 +27,7 @@ const NavBar = ({ onCartClick }) => {
   const handleLogout = () => {
     setDropdownOpen(false);
     logout();
+    toast.success("👋 Đã đăng xuất!");
   };
 
   return (
@@ -49,6 +51,28 @@ const NavBar = ({ onCartClick }) => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+
+        {/* Cart icon - always visible (outside collapse) */}
+        <div className="d-flex align-items-center d-lg-none">
+          {isAuthenticated && (
+          <button
+            className="btn btn-link text-dark position-relative p-0 border-0 mr-3"
+            title="Giỏ hàng"
+            onClick={onCartClick}
+            style={{ textDecoration: "none", boxShadow: "none" }}
+          >
+            <i className="fa-solid fa-bag-shopping"></i>
+            {totalItems > 0 && (
+              <span
+                className="badge badge-dark badge-pill position-absolute"
+                style={{ top: "-8px", right: "-10px", fontSize: "10px" }}
+              >
+                {totalItems}
+              </span>
+            )}
+          </button>
+          )}
+        </div>
 
         {/* Navigation Links */}
         <div className="collapse navbar-collapse" id="mainNav">
@@ -187,8 +211,9 @@ const NavBar = ({ onCartClick }) => {
                 <i className="fa-regular fa-user"></i>
               </Link>
             )}
+            {isAuthenticated && (
             <button
-              className="btn btn-link text-dark position-relative p-0 border-0"
+              className="btn btn-link text-dark position-relative p-0 border-0 d-none d-lg-inline-block"
               title="Giỏ hàng"
               onClick={onCartClick}
               style={{ textDecoration: "none", boxShadow: "none" }}
@@ -203,6 +228,7 @@ const NavBar = ({ onCartClick }) => {
                 </span>
               )}
             </button>
+            )}
           </div>
         </div>
       </div>

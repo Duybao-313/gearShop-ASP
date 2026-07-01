@@ -29,7 +29,7 @@ namespace duybao.Backend.Controllers
                 .AsQueryable();
 
             // Lọc theo trạng thái (nếu có)
-            if (status.HasValue && status.Value >= 0 && status.Value <= 2)
+            if (status.HasValue && status.Value >= 0 && status.Value <= 3)
             {
                 query = query.Where(o => o.Status == status.Value);
             }
@@ -121,7 +121,7 @@ namespace duybao.Backend.Controllers
                 return RedirectToAction("Index");
             }
 
-            if (newStatus < 0 || newStatus > 2)
+            if (newStatus < 0 || newStatus > 3)
             {
                 TempData["Error"] = "Trạng thái không hợp lệ!";
                 return RedirectToAction("Detail", new { id });

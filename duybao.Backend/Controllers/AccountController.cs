@@ -3,16 +3,21 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using duybao.data;
+using duybao.Backend.Services;
 
 namespace duybao.Backend.Controllers
 {
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(ApplicationDbContext context, IEmailService emailService, IConfiguration configuration)
         {
             _context = context;
+            _emailService = emailService;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -365,16 +370,35 @@ namespace duybao.Backend.Controllers
             user.ResetPasswordTokenExpiry = DateTime.UtcNow.AddMinutes(15);
             await _context.SaveChangesAsync();
 
-            // Tạo link reset
-            var resetLink = Url.Action("ResetPassword", "Account", new { token }, Request.Scheme);
+            // Tạo link reset trỏ về Frontend React
+            var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+            var resetLink = $"{frontendUrl}/reset-password?token={token}";
+
+            // ── Gửi email reset password (fire-and-forget) ──
+            var customer = _context.Customers.FirstOrDefault(c => c.UserId == user.Id);
+            var userEmail = customer?.Email ?? user.Username;
+            if (!string.IsNullOrEmpty(resetLink))
+            {
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _emailService.SendPasswordResetAsync(userEmail, user.Username, resetLink);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[Email Error] Không gửi được email reset password cho {user.Username}: {ex.Message}");
+                    }
+                });
+            }
 
             if (isApi)
             {
-                return Json(new { success = true, message = "Link đặt lại mật khẩu đã được tạo.", resetLink });
+                return Json(new { success = true, message = "Link đặt lại mật khẩu đã được gửi qua email.", resetLink });
             }
 
             ViewBag.ResetLink = resetLink;
-            ViewBag.Message = "Link đặt lại mật khẩu đã được tạo (có hiệu lực trong 15 phút):";
+            ViewBag.Message = "Link đặt lại mật khẩu đã được gửi qua email (có hiệu lực trong 15 phút):";
             return View();
         }
 

@@ -42,6 +42,9 @@
                 case 2:
                     <span class="badge bg-success fs-6 px-3 py-2">✅ Đã xong</span>
                     break;
+                case 3:
+                    <span class="badge bg-danger fs-6 px-3 py-2">❌ Đã hủy</span>
+                    break;
             }
         </div>
     </div>
@@ -72,6 +75,7 @@
                                     case 0: <span class="badge bg-warning text-dark">⏳ Chờ duyệt</span>; break;
                                     case 1: <span class="badge bg-primary">🚚 Đang giao</span>; break;
                                     case 2: <span class="badge bg-success">✅ Đã xong</span>; break;
+                                    case 3: <span class="badge bg-danger">❌ Đã hủy</span>; break;
                                 }
                             </td>
                         </tr>
@@ -158,6 +162,7 @@
                                 <option value="0" selected="@(Model.Status == 0 ? "selected" : null)">⏳ Chờ duyệt</option>
                                 <option value="1" selected="@(Model.Status == 1 ? "selected" : null)">🚚 Đang giao</option>
                                 <option value="2" selected="@(Model.Status == 2 ? "selected" : null)">✅ Đã xong</option>
+                                <option value="3" selected="@(Model.Status == 3 ? "selected" : null)">❌ Đã hủy</option>
                             </select>
                         </div>
                         <div class="col-md-5">

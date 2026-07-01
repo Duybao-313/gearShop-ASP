@@ -63,6 +63,16 @@ const orderService = {
   updateOrderStatus(id, status) {
     return axiosClient.put(`/Orders/${id}/status`, { status });
   },
+
+  /**
+   * Hủy đơn hàng (khi trạng thái = 0: Chờ duyệt)
+   * PUT /api/Orders/{id}/cancel
+   * @param {number} id - Mã đơn hàng
+   * @returns {Promise<Object>}
+   */
+  cancelOrder(id) {
+    return axiosClient.put(`/Orders/${id}/cancel`);
+  },
 };
 
 export default orderService;

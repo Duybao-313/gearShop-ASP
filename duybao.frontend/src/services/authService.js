@@ -170,6 +170,18 @@ const authService = {
       };
     }
   },
+
+  // ─── Lấy thông tin profile Customer (email, fullName, phone, address) ──
+  getProfile: async () => {
+    try {
+      const response = await authAxios.get("/api/account/profile", {
+        headers: { Accept: "application/json" },
+      });
+      return { success: true, data: response.data };
+    } catch {
+      return { success: false, data: null };
+    }
+  },
 };
 
 export default authService;

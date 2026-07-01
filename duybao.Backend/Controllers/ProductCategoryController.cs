@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using duybao.data;
 using duybao.data.Entities;
 
@@ -9,10 +10,12 @@ namespace duybao.Backend.Controllers
     public class ProductCategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public ProductCategoryController(ApplicationDbContext context)
+        public ProductCategoryController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         public IActionResult Index()
@@ -32,8 +35,24 @@ namespace duybao.Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CategoryProduct model)
+        public async Task<IActionResult> Create(CategoryProduct model, IFormFile? imageFile)
         {
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "categories");
+                Directory.CreateDirectory(uploadsFolder);
+
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+
+                model.ImageUrl = "/uploads/categories/" + uniqueFileName;
+            }
+
             _context.CategoriesProducts.Add(model);
             _context.SaveChanges();
             return RedirectToAction("Index");
@@ -52,8 +71,44 @@ namespace duybao.Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(CategoryProduct model)
+        public async Task<IActionResult> Edit(CategoryProduct model, IFormFile? imageFile)
         {
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "categories");
+                Directory.CreateDirectory(uploadsFolder);
+
+                // Xóa ảnh cũ nếu có
+                var existingCategory = _context.CategoriesProducts.AsNoTracking().FirstOrDefault(c => c.Id == model.Id);
+                if (existingCategory != null && !string.IsNullOrEmpty(existingCategory.ImageUrl))
+                {
+                    var oldFilePath = Path.Combine(_env.WebRootPath, existingCategory.ImageUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+
+                model.ImageUrl = "/uploads/categories/" + uniqueFileName;
+            }
+            else
+            {
+                // Giữ lại ảnh cũ nếu không upload ảnh mới
+                var existingCategory = _context.CategoriesProducts.AsNoTracking().FirstOrDefault(c => c.Id == model.Id);
+                if (existingCategory != null)
+                {
+                    model.ImageUrl = existingCategory.ImageUrl;
+                }
+            }
+
             _context.CategoriesProducts.Update(model);
             _context.SaveChanges();
             return RedirectToAction("Index");

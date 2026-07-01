@@ -11,6 +11,17 @@ const ITEMS_PER_PAGE = 9;
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
+  const categorySlug = searchParams.get("category") || "";
+
+  // Helper: tạo slug từ tên danh mục (giống HomePage)
+  const toSlug = (name) => {
+    return (name || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  };
 
   // Dữ liệu API
   const [products, setProducts] = useState([]);
@@ -62,6 +73,25 @@ const ProductsPage = () => {
     fetchProducts();
     fetchCategories();
   }, [searchQuery]);
+
+  // Tự động chọn danh mục khi URL có category slug
+  useEffect(() => {
+    if (categorySlug && categories.length > 0) {
+      const matched = categories.find(
+        (cat) => toSlug(cat.name) === categorySlug,
+      );
+      if (matched) {
+        setSelectedCategory(matched.id);
+      }
+    }
+  }, [categorySlug, categories]);
+
+  // Lấy tên danh mục đang chọn để hiển thị tiêu đề
+  const selectedCategoryName = useMemo(() => {
+    if (!selectedCategory) return null;
+    const cat = categories.find((c) => c.id === selectedCategory);
+    return cat ? cat.name : null;
+  }, [selectedCategory, categories]);
 
   // === GIÁ CAO NHẤT THỰC TẾ TỪ DỮ LIỆU ===
   const maxProductPrice = useMemo(() => {
@@ -192,7 +222,11 @@ const ProductsPage = () => {
                 className="font-weight-bold text-dark mb-0 text-uppercase"
                 style={{ fontSize: "42px", letterSpacing: "-1px" }}
               >
-                {searchQuery ? `"${searchQuery}"` : "Gaming Gear"}
+                {searchQuery
+                  ? `"${searchQuery}"`
+                  : selectedCategoryName
+                    ? selectedCategoryName
+                    : "Gaming Gear"}
               </h1>
             </div>
 

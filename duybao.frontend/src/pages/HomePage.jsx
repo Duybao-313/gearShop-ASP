@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import productService from "../services/productService";
 import blogService from "../services/blogService";
+import categoryProductService from "../services/categoryProductService";
 import ProductCard from "../components/ProductCard";
 
 const HomePage = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [latestPosts, setLatestPosts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
@@ -35,20 +37,31 @@ const HomePage = () => {
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryProductService.getAllCategoryProducts();
+        setCategories(data || []);
+      } catch (error) {
+        console.error("Lỗi khi tải danh mục:", error);
+      }
+    };
+
     fetchProducts();
     fetchPosts();
+    fetchCategories();
   }, []);
 
   const newArrivals = featuredProducts.slice(0, 4);
   const bestSellers = featuredProducts.slice(4, 8);
 
-  const categories = [
-    { name: "CHUỘT", icon: "fa-solid fa-computer-mouse", slug: "chuot" },
-    { name: "BÀN PHÍM", icon: "fa-solid fa-keyboard", slug: "ban-phim" },
-    { name: "TAI NGHE", icon: "fa-solid fa-headphones", slug: "tai-nghe" },
-    { name: "MÀN HÌNH", icon: "fa-solid fa-desktop", slug: "man-hinh" },
-    { name: "LINH KIỆN", icon: "fa-solid fa-microchip", slug: "linh-kien" },
-  ];
+  const toSlug = (name) => {
+    return name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  };
 
   return (
     <main>
@@ -129,15 +142,25 @@ const HomePage = () => {
           <div className="row no-gutters">
             {categories.map((cat, index) => (
               <Link
-                key={index}
-                to={"/products?category=" + cat.slug}
+                key={cat.id}
+                to={"/products?category=" + toSlug(cat.name)}
                 className={
                   "col-6 col-md category-card text-center py-4" +
-                  (index < 4 ? " border-right" : "")
+                  (index < categories.length - 1 ? " border-right" : "")
                 }
               >
-                <i className={cat.icon + " category-icon"}></i>
-                <span className="d-block mt-2 category-label">{cat.name}</span>
+                {cat.imageUrl ? (
+                  <img
+                    src={cat.imageUrl}
+                    alt={cat.name}
+                    className="category-image"
+                  />
+                ) : (
+                  <i className="fa-solid fa-grid-2 category-icon"></i>
+                )}
+                <span className="d-block mt-2 category-label">
+                  {cat.name.toUpperCase()}
+                </span>
               </Link>
             ))}
           </div>

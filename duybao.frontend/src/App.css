@@ -69,6 +69,16 @@ body {
   display: block;
   transition: all 0.3s ease;
 }
+.category-image {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+  background: #f0f0f0;
+}
 .category-label {
   font-size: 12px;
   font-weight: 600;

@@ -19,6 +19,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th style="width:80px">ID</th>
+                        <th style="width:100px">Ảnh</th>
                         <th>Tên danh mục</th>
                         <th>Mô tả</th>
                         <th style="width:180px">Thao tác</th>
@@ -29,6 +30,16 @@
                     {
                         <tr>
                             <td>@item.Id</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.Name" style="width:60px;height:60px;object-fit:cover;border-radius:6px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
                             <td>@item.Name</td>
                             <td>@item.Description</td>
                             <td>

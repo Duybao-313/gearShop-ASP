@@ -52,11 +52,11 @@ INSERT INTO `Posts` (`Id`, `Title`, `Content`, `ImageUrl`, `CategoryId`, `Create
 -- ============================================================
 -- BƯỚC 3: CategoryProduct — Gaming Gear (4 danh mục gốc)
 -- ============================================================
-INSERT INTO `CategoriesProducts` (`Id`, `Name`, `Description`) VALUES
-(1, 'Chuột Gaming', 'Chuột chuyên dụng cho game thủ'),
-(2, 'Bàn phím Gaming', 'Bàn phím cơ, switch cao cấp'),
-(3, 'Tai nghe Gaming', 'Tai nghe surround, micro chống ồn'),
-(4, 'Lót chuột Gaming', 'Lót chuột kích thước lớn, bề mặt tối ưu');
+INSERT INTO `CategoriesProducts` (`Id`, `Name`, `Description`, `ImageUrl`) VALUES
+(1, 'Chuột Gaming', 'Chuột chuyên dụng cho game thủ', 'https://resource.logitechg.com/d_transparent.gif/content/dam/gaming/en/products/pro-x-superlight/pro-x-superlight-black-gallery-1.png'),
+(2, 'Bàn phím Gaming', 'Bàn phím cơ, switch cao cấp', 'https://www.corsair.com/medias/sys_master/images/images/h9b/hcd/9540513792030/-CH-9109412-NA-Gallery-K70-RGB-PRO-01.png'),
+(3, 'Tai nghe Gaming', 'Tai nghe surround, micro chống ồn', 'https://media.kingston.com/hyperx/cloud/hhsc1x-ba-xxl/cloud-ii-wireless-gallery-1.jpg'),
+(4, 'Lót chuột Gaming', 'Lót chuột kích thước lớn, bề mặt tối ưu', 'https://media.steelseriescdn.com/thumbs/catalog/items/63824/63824_QcK_Heavy_XXL_1.png');
 
 -- ============================================================
 -- BƯỚC 4: Products — Gaming Gear (12 sản phẩm)
@@ -92,11 +92,11 @@ INSERT INTO `Reviews` (`Id`, `ProductId`, `Rating`, `Comment`, `ReviewerName`, `
 -- ============================================================
 -- BƯỚC 6: CategoryProduct — DummyJSON (thêm 4 danh mục công nghệ)
 -- ============================================================
-INSERT INTO `CategoriesProducts` (`Id`, `Name`, `Description`) VALUES
-(5, 'Laptop', 'Laptop gaming & văn phòng'),
-(6, 'Phụ kiện công nghệ', 'Tai nghe, sạc, chuột, bàn phím'),
-(7, 'Điện thoại', 'Smartphone các hãng'),
-(8, 'Tablet', 'Máy tính bảng');
+INSERT INTO `CategoriesProducts` (`Id`, `Name`, `Description`, `ImageUrl`) VALUES
+(5, 'Laptop', 'Laptop gaming & văn phòng', 'https://cdn.dummyjson.com/product-images/laptops/apple-macbook-pro-14-inch-space-grey/thumbnail.webp'),
+(6, 'Phụ kiện công nghệ', 'Tai nghe, sạc, chuột, bàn phím', 'https://cdn.dummyjson.com/product-images/mobile-accessories/apple-airpods/thumbnail.webp'),
+(7, 'Điện thoại', 'Smartphone các hãng', 'https://cdn.dummyjson.com/product-images/smartphones/iphone-13-pro/thumbnail.webp'),
+(8, 'Tablet', 'Máy tính bảng', 'https://cdn.dummyjson.com/product-images/tablets/ipad-mini-2021-starlight/thumbnail.webp');
 
 -- ============================================================
 -- BƯỚC 7: Products — LAPTOPS (5 sp) → CategoryProductId = 5

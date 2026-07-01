@@ -37,7 +37,8 @@ namespace duybao.Backend.Controllers
                     .Select(c => new {
                         c.Id,
                         c.Name,
-                        c.Description
+                        c.Description,
+                        c.ImageUrl
                     })
                     .ToListAsync();
 
@@ -63,7 +64,8 @@ namespace duybao.Backend.Controllers
                 .Select(c => new {
                     c.Id,
                     c.Name,
-                    c.Description
+                    c.Description,
+                    c.ImageUrl
                 })
                 .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -90,7 +92,7 @@ namespace duybao.Backend.Controllers
             _context.CategoriesProducts.Add(model);
             await _context.SaveChangesAsync();
 
-            return StatusCode(201, new { model.Id, model.Name, model.Description });
+            return StatusCode(201, new { model.Id, model.Name, model.Description, model.ImageUrl });
         }
 
         /// <summary>

@@ -17,8 +17,8 @@ namespace duybao.Backend.Controllers
             _context = context;
         }
 
-        // Hàm Index: Hiển thị danh sách sản phẩm từ Database
-        public IActionResult Index(int? id)
+        // Hàm Index: Hiển thị danh sách sản phẩm từ Database (có phân trang)
+        public IActionResult Index(int? id, int page = 1, int pageSize = 9)
         {
             IQueryable<Product> query = _context.Products
                 .Include(p => p.CategoryProduct);
@@ -28,11 +28,23 @@ namespace duybao.Backend.Controllers
                 query = query.Where(p => p.CategoryProductId == id);
             }
 
+            int totalItems = query.Count();
+            int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            // Đảm bảo page hợp lệ
+            page = Math.Max(1, Math.Min(page, totalPages > 0 ? totalPages : 1));
+
             var products = query
                 .OrderByDescending(p => p.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
 
             ViewBag.CategoryProductListAll = _context.CategoriesProducts.OrderBy(c => c.Name).ToList();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.PageSize = pageSize;
+            ViewBag.CategoryFilterId = id;
             return View(products);
         }
 

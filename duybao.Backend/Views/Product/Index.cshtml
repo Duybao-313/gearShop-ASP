@@ -23,7 +23,8 @@
                         <option value="">-- Tất cả danh mục --</option>
                         @foreach (var cat in (IEnumerable<duybao.data.Entities.CategoryProduct>)ViewBag.CategoryProductListAll)
                         {
-                            <option value="@cat.Id">@cat.Name</option>
+                            bool isSelected = ViewBag.CategoryFilterId != null && (int)ViewBag.CategoryFilterId == cat.Id;
+                            <!option value="@cat.Id" selected=@isSelected>@cat.Name</!option>
                         }
                     </select>
                 </div>
@@ -71,4 +72,91 @@
             </div>
         }
     </div>
+
+    @{
+        int currentPage = ViewBag.CurrentPage ?? 1;
+        int totalPages = ViewBag.TotalPages ?? 1;
+        int? catId = ViewBag.CategoryFilterId;
+    }
+
+    <!-- Phân trang -->
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Phân trang sản phẩm">
+            <div class="d-flex justify-content-between align-items-center mt-3 mb-4">
+                <div class="text-muted small">
+                    Trang @currentPage / @totalPages
+                </div>
+                <ul class="pagination mb-0">
+                    @{
+                        // Nút Previous
+                        string prevUrl = Url.Action("Index", new { id = catId, page = currentPage - 1 });
+                    }
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="@prevUrl" aria-label="Trước">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    @{
+                        // Xác định khoảng trang hiển thị (tối đa 5 nút)
+                        int startPage = Math.Max(1, currentPage - 2);
+                        int endPage = Math.Min(totalPages, currentPage + 2);
+
+                        // Điều chỉnh để luôn hiển thị 5 nút nếu có đủ trang
+                        if (endPage - startPage < 4)
+                        {
+                            if (startPage == 1)
+                            {
+                                endPage = Math.Min(totalPages, startPage + 4);
+                            }
+                            else
+                            {
+                                startPage = Math.Max(1, endPage - 4);
+                            }
+                        }
+                    }
+
+                    @if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { id = catId, page = 1 })">1</a>
+                        </li>
+                        @if (startPage > 2)
+                        {
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        }
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { id = catId, page = i })">@i</a>
+                        </li>
+                    }
+
+                    @if (endPage < totalPages)
+                    {
+                        @if (endPage < totalPages - 1)
+                        {
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { id = catId, page = totalPages })">@totalPages</a>
+                        </li>
+                    }
+
+                    @{
+                        // Nút Next
+                        string nextUrl = Url.Action("Index", new { id = catId, page = currentPage + 1 });
+                    }
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@nextUrl" aria-label="Sau">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    }
 </div>

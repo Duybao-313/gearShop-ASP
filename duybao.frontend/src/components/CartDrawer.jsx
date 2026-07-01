@@ -231,6 +231,7 @@ const CartItem = ({ item, onUpdateQuantity, onRemove }) => {
             <button
               className="btn btn-sm btn-link text-dark text-decoration-none px-2"
               onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+              disabled={item.quantity >= (item.stockQuantity ?? 9999)}
             >
               +
             </button>

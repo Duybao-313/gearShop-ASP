@@ -90,6 +90,18 @@ namespace duybao.Backend.Controllers
             var existing = await _context.CartItems
                 .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == input.ProductId);
 
+            var currentCartQty = existing?.Quantity ?? 0;
+            var newTotalQty = currentCartQty + quantity;
+
+            // Kiểm tra vượt tồn kho
+            if (newTotalQty > product.StockQuantity)
+            {
+                var remaining = product.StockQuantity - currentCartQty;
+                if (remaining <= 0)
+                    return BadRequest(new { message = $"Sản phẩm \"{product.Name}\" đã đạt số lượng tối đa trong giỏ hàng. Tồn kho: {product.StockQuantity}" });
+                return BadRequest(new { message = $"Không thể thêm {quantity} sản phẩm \"{product.Name}\". Bạn chỉ có thể thêm tối đa {remaining} sản phẩm nữa (tồn kho: {product.StockQuantity})" });
+            }
+
             if (existing != null)
             {
                 existing.Quantity += quantity;
@@ -134,6 +146,11 @@ namespace duybao.Backend.Controllers
 
             if (input.Quantity < 1)
                 return BadRequest(new { message = "Số lượng phải lớn hơn 0" });
+
+            // Kiểm tra vượt tồn kho
+            var product = await _context.Products.FindAsync(item.ProductId);
+            if (product != null && input.Quantity > product.StockQuantity)
+                return BadRequest(new { message = $"Số lượng vượt quá tồn kho. Sản phẩm \"{product.Name}\" chỉ còn {product.StockQuantity} sản phẩm." });
 
             item.Quantity = input.Quantity;
             await _context.SaveChangesAsync();
@@ -199,12 +216,23 @@ namespace duybao.Backend.Controllers
 
             foreach (var item in items)
             {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product == null) continue;
+
                 var existing = await _context.CartItems
                     .FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == item.ProductId);
 
+                var currentCartQty = existing?.Quantity ?? 0;
+                // Merge: lấy số lượng lớn hơn giữa server và localStorage (tránh cộng dồn khi refresh)
+                var newTotalQty = Math.Max(currentCartQty, item.Quantity);
+
+                // Giới hạn theo tồn kho khi merge
+                if (newTotalQty > product.StockQuantity)
+                    newTotalQty = product.StockQuantity;
+
                 if (existing != null)
                 {
-                    existing.Quantity += item.Quantity;
+                    existing.Quantity = newTotalQty;
                     existing.AddedAt = DateTime.Now;
                 }
                 else
@@ -213,7 +241,7 @@ namespace duybao.Backend.Controllers
                     {
                         UserId = userId,
                         ProductId = item.ProductId,
-                        Quantity = item.Quantity,
+                        Quantity = newTotalQty,
                         AddedAt = DateTime.Now
                     });
                 }

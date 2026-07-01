@@ -127,6 +127,7 @@ const CartItem = ({ item }) => {
           <button
             className="btn btn-sm px-3 border-0 rounded-0"
             onClick={handleIncrease}
+            disabled={item.quantity >= (item.stockQuantity ?? 9999)}
             style={{
               fontSize: "16px",
               lineHeight: 1,

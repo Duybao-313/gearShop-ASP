@@ -78,6 +78,7 @@ const normalizeCartItem = (apiItem) => ({
   brand: apiItem.product?.brand || "",
   sku: apiItem.product?.sku || "",
   quantity: apiItem.quantity,
+  stockQuantity: apiItem.product?.stockQuantity ?? 9999,
 });
 
 // ─── Provider ─────────────────────────────────────────────────────
@@ -118,6 +119,8 @@ export const CartProvider = ({ children }) => {
               quantity: item.quantity,
             }));
             await cartService.mergeCart(mergePayload);
+            // Xóa localStorage sau khi merge thành công để tránh merge lại khi refresh
+            localStorage.removeItem(CART_STORAGE_KEY);
           }
 
           // Tải giỏ từ server
@@ -149,6 +152,23 @@ export const CartProvider = ({ children }) => {
   // ─── Actions ──────────────────────────────────────────────────
   const addToCart = useCallback(
     async (product, quantity = 1) => {
+      const stockQty = product.stockQuantity ?? 9999;
+
+      // Kiểm tra số lượng hiện có trong giỏ
+      const existingItem = state.items.find((i) => i.id === product.id);
+      const currentCartQty = existingItem?.quantity ?? 0;
+      const newTotalQty = currentCartQty + quantity;
+
+      if (newTotalQty > stockQty) {
+        const remaining = stockQty - currentCartQty;
+        if (remaining <= 0) {
+          alert(`Sản phẩm "${product.name}" đã đạt số lượng tối đa trong giỏ hàng. Tồn kho: ${stockQty}`);
+        } else {
+          alert(`Không thể thêm ${quantity} sản phẩm "${product.name}". Bạn chỉ có thể thêm tối đa ${remaining} sản phẩm nữa (tồn kho: ${stockQty})`);
+        }
+        return;
+      }
+
       const payload = {
         id: product.id,
         name: product.name,
@@ -157,6 +177,7 @@ export const CartProvider = ({ children }) => {
         brand: product.brand,
         sku: product.sku,
         quantity,
+        stockQuantity: stockQty,
       };
 
       dispatch({ type: "ADD_ITEM", payload });
@@ -170,7 +191,7 @@ export const CartProvider = ({ children }) => {
         }
       }
     },
-    [isAuthenticated],
+    [isAuthenticated, state.items],
   );
 
   const removeFromCart = useCallback(
@@ -192,12 +213,20 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = useCallback(
     async (productId, quantity) => {
+      if (quantity < 1) return;
+
+      // Kiểm tra vượt tồn kho
+      const item = state.items.find((i) => i.id === productId);
+      if (item && quantity > (item.stockQuantity ?? 9999)) {
+        alert(`Không thể cập nhật số lượng vượt quá tồn kho. Sản phẩm "${item.name}" chỉ còn ${item.stockQuantity} sản phẩm.`);
+        return;
+      }
+
       dispatch({
         type: "UPDATE_QUANTITY",
         payload: { id: productId, quantity },
       });
 
-      const item = state.items.find((i) => i.id === productId);
       if (isAuthenticated && item?.cartItemId) {
         try {
           await cartService.updateQuantity(item.cartItemId, quantity);

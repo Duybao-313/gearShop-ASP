@@ -260,6 +260,7 @@ const ProductInfo = ({ product }) => {
             <button
               className="btn btn-sm btn-link text-dark text-decoration-none px-3"
               onClick={() => setQuantity(quantity + 1)}
+              disabled={quantity >= stockQuantity}
             >
               +
             </button>
